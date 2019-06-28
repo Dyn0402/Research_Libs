@@ -19,9 +19,12 @@ struct tree_data {
 };
 
 vector<int> get_Rs(vector<double> angles, int divisions);
+
 double get_cumulant(vector<double> data, int n);
 double get_central_moment(vector<double> data, int n);
 double get_raw_moment(vector<double> data, int n);
 
+vector<int> nproton_map_to_vec(map<int, int> nproton);
+vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios);
 
 #endif /* RATIO_METHODS_H_ */

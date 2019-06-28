@@ -85,3 +85,30 @@ double get_raw_moment(vector<double> data, int n) {
 
 	return(moment / data.size());
 }
+
+
+//Convert nproton map to vector.
+vector<int> nproton_map_to_vec(map<int, int> nproton) {
+	vector<int> vec;
+	for(pair<int, int> num:nproton) {
+		vector<int> entry(num.second, num.first);
+		vec.insert(end(vec), begin(entry), end(entry));
+	}
+
+	return(vec);
+}
+
+
+//Convert ratios map to vector.
+vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios) {
+	vector<double> vec;
+	for(pair<int, map<int, int>> event:ratios) {
+		for(pair<int, int> div:event.second) {
+			vector<double> entry(div.second, ((double)div.first) / event.first);
+			vec.insert(end(vec), begin(entry), end(entry));
+		}
+	}
+
+	return(vec);
+}
+
