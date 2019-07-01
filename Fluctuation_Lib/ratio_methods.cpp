@@ -43,6 +43,26 @@ vector<int> get_Rs(vector<double> angles, int divisions) {
 }
 
 
+//Rotate angle by rotate while keeping within 2pi range.
+double rotate_angle(double angle, double rotate) {
+	angle += rotate;
+	if(angle > 2 * M_PI) {
+		angle -= 2 * M_PI;
+	}
+	return(angle);
+}
+
+
+//Rotate angles by rotate. Generalization of rotate_angle.
+vector<double> rotate_angles(vector<double> angles, double rotate) {
+	vector<double> rotated_angles;
+	for(double angle:angles) {
+		rotated_angles.push_back(rotate_angle(angle, rotate));
+	}
+	return(rotated_angles);
+}
+
+
 //Get the nth cumulant of data. Only implemented for n = {1,2,3,4,5}
 //Bad implementation, should use generating function or standard library which does.
 double get_cumulant(vector<double> data, int n) {
