@@ -22,16 +22,16 @@ using namespace std;
 
 
 
-void write_tree_data(string job_id, tree_data data) {
-	write_ratios(job_id, data.ratios);
-	write_nprotons(job_id, data.good_protons);
+void write_tree_data(string job_id, tree_data data, string path) {
+	write_ratios(job_id, data.ratios, path);
+	write_nprotons(job_id, data.good_protons, path);
 }
 
 
-void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios) {
+void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios, string path) {
 	for(pair<int, map<int, map<int, map<int, int>>>> divs:ratios) {
 		for(pair<int, map<int, map<int, int>>> cents:divs.second) {
-			string out_name = io::ratios_file_pre + io::file_name_delimeter;
+			string out_name = path + io::ratios_file_pre + io::file_name_delimeter;
 			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs.first);
 			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string(cents.first);
 			out_name += io::file_name_delimeter + job_id + io::file_ext;
@@ -49,9 +49,9 @@ void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> rat
 }
 
 
-void write_nprotons(string job_id, map<int, map<int, int>> good_protons) {
+void write_nprotons(string job_id, map<int, map<int, int>> good_protons, string path) {
 	for(pair<int, map<int,int>> cent:good_protons) {
-		string out_name = io::nproton_file_pre + io::file_name_delimeter;
+		string out_name = path + io::nproton_file_pre + io::file_name_delimeter;
 		out_name += io::nproton_file_fields[0] + io::file_name_delimeter + to_string(cent.first);
 		out_name += io::file_name_delimeter + job_id + io::file_ext;
 		ofstream out_file(out_name);
@@ -129,4 +129,26 @@ vector<string> split_string_by_char(string str, char del) {
 	}
 
 	return(split);
+}
+
+
+//Return name (not path) of all files in dir_path with extension ext.
+vector<string> get_files_in_dir(string dir_path, string ext, string out) {
+	vector<string> files;
+	DIR* files_dir = opendir(dir_path.data());
+	struct dirent* dp;
+	while((dp=readdir(files_dir)) != NULL) {
+		string file = dp->d_name;
+		vector<string> fields = split_string_by_char(file, '.');
+		if(fields.back() == ext) {
+			files.push_back(file);
+		}
+	}
+	if(out == "path") {
+		for(unsigned i=0; i<files.size(); i++) {
+			files[i] = dir_path + files[i];
+		}
+	}
+
+	return(files);
 }
