@@ -123,8 +123,8 @@ vector<int> nproton_map_to_vec(map<int, int> nproton) {
 vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios) {
 	vector<double> vec;
 	for(pair<int, map<int, int>> event:ratios) {
-		for(pair<int, int> div:event.second) {
-			vector<double> entry(div.second, ((double)div.first) / event.first);
+		for(pair<int, int> bin:event.second) {
+			vector<double> entry(bin.second, ((double)bin.first) / event.first);
 			vec.insert(end(vec), begin(entry), end(entry));
 		}
 	}
@@ -132,3 +132,23 @@ vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios) {
 	return(vec);
 }
 
+
+
+// Sum two tree_data maps.
+void sum_tree_data(tree_data *base, tree_data add) {
+	for(pair<int, map<int, int>> cent:add.good_protons) {
+		for(pair<int, int> num:cent.second) {
+			base->good_protons[cent.first][num.first] += num.second;
+		}
+	}
+
+	for(pair<int, map<int, map<int, map<int,int>>>> div:add.ratios) {
+		for(pair<int, map<int, map<int, int>>> cent:div.second) {
+			for(pair<int, map<int, int>> event:cent.second) {
+				for(pair<int, int> bin:event.second) {
+					base->ratios[div.first][cent.first][event.first][bin.first] += bin.second;
+				}
+			}
+		}
+	}
+}

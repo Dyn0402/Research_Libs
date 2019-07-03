@@ -16,6 +16,9 @@ StRoot/
 # Debug folders
 Debug/
 
+# Release folders
+Release/
+
 #Settings folders
 .settings/
 
