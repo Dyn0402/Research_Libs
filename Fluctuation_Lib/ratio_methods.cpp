@@ -152,3 +152,17 @@ void sum_tree_data(tree_data *base, tree_data add) {
 		}
 	}
 }
+
+
+vector<double> get_two_particle_correlation(vector<double> angles) {
+	vector<double> corrs;
+	for(unsigned i=0; i<angles.size(); i++) {
+		for(unsigned j=i+1; j<angles.size(); j++) {
+			double cor = angles[j] - angles[i];
+			if(cor < 0) { cor+=2*M_PI; }
+			corrs.push_back(cor);
+		}
+	}
+
+	return(corrs);
+}

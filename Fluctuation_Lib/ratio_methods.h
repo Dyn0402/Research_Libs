@@ -30,4 +30,6 @@ vector<int> nproton_map_to_vec(map<int, int> nproton);
 vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios);
 void sum_tree_data(tree_data *base, tree_data add);
 
+vector<double> get_two_particle_correlation(vector<double> angles);
+
 #endif /* RATIO_METHODS_H_ */
