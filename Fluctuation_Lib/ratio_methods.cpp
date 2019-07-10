@@ -68,35 +68,42 @@ vector<double> rotate_angles(vector<double> angles, double rotate) {
 //Bad implementation, should use generating function or standard library which does.
 tuple<double, double> get_cumulant(vector<double> data, int n) {
 	double cumulant, err;
-	double mu1, mu2, mu3, mu4, mu5, mu6, mu8;
+	double mu2, mu3, mu4, mu5, mu6, mu8;
 	if(n == 1) {
-		mu1 = get_raw_moment(data, 1);
-		mu2 = get_raw_moment(data, 2);
-		cumulant = mu1;
+		mu2 = get_central_moment(data, 2);
+
+		cumulant = get_raw_moment(data, 1);
+
 		err = mu2 / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 2) {
-		mu2 = get_raw_moment(data, 2);
-		mu4 = get_raw_moment(data, 4);
+		mu2 = get_central_moment(data, 2);
+		mu4 = get_central_moment(data, 4);
+
 		cumulant = mu2;
+
 		err = ( mu4 - pow(mu2,2) ) / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 3) {
-		mu2 = get_raw_moment(data, 2);
-		mu3 = get_raw_moment(data, 3);
-		mu4 = get_raw_moment(data, 4);
-		mu6 = get_raw_moment(data, 6);
+		mu2 = get_central_moment(data, 2);
+		mu3 = get_central_moment(data, 3);
+		mu4 = get_central_moment(data, 4);
+		mu6 = get_central_moment(data, 6);
+
 		cumulant = mu3;
+
 		err = ( mu6 - pow(mu3,2) + 9*pow(mu2,3) - 6*mu2*mu4 ) / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 4) {
-		mu2 = get_raw_moment(data, 2);
-		mu3 = get_raw_moment(data, 3);
-		mu4 = get_raw_moment(data, 4);
-		mu5 = get_raw_moment(data, 5);
-		mu6 = get_raw_moment(data, 6);
-		mu8 = get_raw_moment(data, 8);
+		mu2 = get_central_moment(data, 2);
+		mu3 = get_central_moment(data, 3);
+		mu4 = get_central_moment(data, 4);
+		mu5 = get_central_moment(data, 5);
+		mu6 = get_central_moment(data, 6);
+		mu8 = get_central_moment(data, 8);
+
 		cumulant = mu4 - 3 * pow(mu2,2);
+
 		err = ( mu8 - 12*mu6*mu2 - 8*mu5*mu3 - pow(mu4, 2) + 48*mu4*pow(mu2,2) + 64*pow(mu3,2)*mu2 - 36*pow(mu2,4) ) / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 //	} else if(n == 5) {
