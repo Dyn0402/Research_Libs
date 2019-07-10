@@ -74,7 +74,7 @@ tuple<double, double> get_cumulant(vector<double> data, int n) {
 
 		cumulant = get_raw_moment(data, 1);
 
-		err = mu2 / (double)data.size();
+		err = mu2;// / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 2) {
 		mu2 = get_central_moment(data, 2);
@@ -82,7 +82,7 @@ tuple<double, double> get_cumulant(vector<double> data, int n) {
 
 		cumulant = mu2;
 
-		err = ( mu4 - pow(mu2,2) ) / (double)data.size();
+		err = ( mu4 - pow(mu2,2) );// / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 3) {
 		mu2 = get_central_moment(data, 2);
@@ -92,7 +92,7 @@ tuple<double, double> get_cumulant(vector<double> data, int n) {
 
 		cumulant = mu3;
 
-		err = ( mu6 - pow(mu3,2) + 9*pow(mu2,3) - 6*mu2*mu4 ) / (double)data.size();
+		err = ( mu6 - pow(mu3,2) + 9*pow(mu2,3) - 6*mu2*mu4 );// / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 4) {
 		mu2 = get_central_moment(data, 2);
@@ -104,7 +104,7 @@ tuple<double, double> get_cumulant(vector<double> data, int n) {
 
 		cumulant = mu4 - 3 * pow(mu2,2);
 
-		err = ( mu8 - 12*mu6*mu2 - 8*mu5*mu3 - pow(mu4, 2) + 48*mu4*pow(mu2,2) + 64*pow(mu3,2)*mu2 - 36*pow(mu2,4) ) / (double)data.size();
+		err = ( mu8 - 12*mu6*mu2 - 8*mu5*mu3 - pow(mu4, 2) + 48*mu4*pow(mu2,2) + 64*pow(mu3,2)*mu2 - 36*pow(mu2,4) );// / (double)data.size();
 		err = pow(err/(double)data.size(), 0.5);
 //	} else if(n == 5) {
 //		cumulant = get_central_moment(data, n) - 10 * get_central_moment(data, 2) * get_central_moment(data, 3);
