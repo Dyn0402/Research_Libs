@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <tuple>
 #include <math.h>
 #include <cmath>
 
@@ -65,22 +66,49 @@ vector<double> rotate_angles(vector<double> angles, double rotate) {
 
 //Get the nth cumulant of data. Only implemented for n = {1,2,3,4,5}
 //Bad implementation, should use generating function or standard library which does.
-double get_cumulant(vector<double> data, int n) {
-	double cumulant;
+tuple<double, double> get_cumulant(vector<double> data, int n) {
+	double cumulant, err;
+	double mu1, mu2, mu3, mu4, mu5, mu6, mu7, mu8;
 	if(n == 1) {
-		cumulant = get_raw_moment(data, n);
-	} else if(n == 2 || n == 3) {
-		cumulant = get_central_moment(data, n);
+		mu1 = get_raw_moment(data, 1);
+		mu2 = get_raw_moment(data, 2);
+		cumulant = mu1;
+		err = mu2 / (double)data.size();
+		err = pow(err/(double)data.size(), 0.5);
+	} else if(n == 2) {
+		mu2 = get_raw_moment(data, 2);
+		mu4 = get_raw_moment(data, 4);
+		cumulant = mu2;
+		err = ( mu4 - pow(mu2,2) ) / (double)data.size();
+		err = pow(err/(double)data.size(), 0.5);
+	} else if(n == 3) {
+		mu2 = get_raw_moment(data, 2);
+		mu3 = get_raw_moment(data, 3);
+		mu4 = get_raw_moment(data, 4);
+		mu6 = get_raw_moment(data, 6);
+		cumulant = mu3;
+		err = ( mu6 - pow(mu3,2) + 9*pow(mu2,3) - 6*mu2*mu4 ) / (double)data.size();
+		err = pow(err/(double)data.size(), 0.5);
 	} else if(n == 4) {
-		cumulant = get_central_moment(data, n) - 3 * pow(get_central_moment(data, 2),2);
-	} else if(n == 5) {
-		cumulant = get_central_moment(data, n) - 10 * get_central_moment(data, 2) * get_central_moment(data, 3);
+		mu2 = get_raw_moment(data, 2);
+		mu3 = get_raw_moment(data, 3);
+		mu4 = get_raw_moment(data, 4);
+		mu5 = get_raw_moment(data, 5);
+		mu6 = get_raw_moment(data, 6);
+		mu4 = get_raw_moment(data, 8);
+		cumulant = mu4 - 3 * pow(mu2,2);
+		err = ( mu8 - 12*mu6*mu2 - 8*mu5*mu3 - pow(mu4, 2) + 48*mu4*pow(mu2,2) + 64*pow(mu3,2)*mu2 - 36*pow(mu2,4) ) / (double)data.size();
+		err = pow(err/(double)data.size(), 0.5);
+//	} else if(n == 5) {
+//		cumulant = get_central_moment(data, n) - 10 * get_central_moment(data, 2) * get_central_moment(data, 3);
+//		err = (get_central_moment(data, 4) - pow(get_central_moment(data,2),2)) / (double)data.size();
+//		err = pow(err/(double)data.size(), 0.5);
 	} else {
-		cumulant = 0;
-		cout << n << "th cumulant not implemented. Returned " << cumulant << endl;
+		cumulant = err = 0;
+		cout << n << "th cumulant not implemented. Returned " << cumulant << " +- " << err << endl;
 	}
 
-	return(cumulant);
+	return(make_tuple(cumulant, err));
 }
 
 //Calculate the nth central moment of data.
