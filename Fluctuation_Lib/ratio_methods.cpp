@@ -18,27 +18,41 @@ using namespace std;
 
 
 vector<int> get_Rs(vector<double> angles, int divisions) {
-	vector<int> Rs = {};
-	int r;
-	double low_cut, high_cut;
+	vector<int> Rs(divisions, 0);
+	int bin;
+
 
 	if(angles.size() > 0) {
-		for(int i = 0; i < divisions; i++) {
-			r = 0.0;
-			low_cut = i * 2. * M_PI / divisions;
-			high_cut = (i+1) * 2. * M_PI / divisions;
-
-			for(auto angle:angles) {
-				if(angle >= low_cut  && angle < high_cut) {
-					r++;
-				}
-				if(i+1 == divisions && angle == high_cut) {
-					r++;
-				}
+		for(double angle:angles) {
+			bin = 0;
+			while(angle > ((double)bin+1) / divisions * 2 * M_PI) {
+				bin++;
 			}
-			Rs.push_back(r);
+			Rs[bin]++;
 		}
 	}
+
+//	vector<int> Rs;
+//	double low_cut, high_cut;
+//	int r;
+//
+//	if(angles.size() > 0) {
+//		for(int i = 0; i < divisions; i++) {
+//			r = 0;
+//			low_cut = i * 2. * M_PI / divisions;
+//			high_cut = (i+1) * 2. * M_PI / divisions;
+//
+//			for(auto angle:angles) {
+//				if(angle >= low_cut  && angle < high_cut) {
+//					r++;
+//				}
+//				if(i+1 == divisions && angle == high_cut) {
+//					r++;
+//				}
+//			}
+//			Rs.push_back(r);
+//		}
+//	}
 
 	return(Rs);
 }
