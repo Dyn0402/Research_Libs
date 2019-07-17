@@ -8,6 +8,7 @@
  */
 
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -124,7 +125,6 @@ void Stats::calc_mean(bool err) {
 // Calculate corresponding uncertainty if err and not already calculated.
 void Stats::calc_standard_deviation(bool err) {
 	if(!standard_deviation_calc.val) {
-		double sum = 0.0;
 		calc_central_moment(2);
 		standard_deviation.val = pow(central_moment[2], 0.5);
 		standard_deviation_calc.val = true;
@@ -143,7 +143,7 @@ void Stats::calc_skewness(bool err) {
 	if(!skewness_calc.val) {
 		calc_central_moment({2,3});
 		skewness.val = central_moment[3] / pow(central_moment[2], 1.5);
-		kurtosis_calc.val = true;
+		skewness_calc.val = true;
 	}
 	if(err && !skewness_calc.err) {
 		calc_central_moment({4,5,6});
@@ -190,7 +190,7 @@ void Stats::calc_central_moment(vector<int> ns) {
 void Stats::calc_central_moment(int n) {
 	if(!central_moments_calc[n]) {
 		if(!mean_calc.val) { calc_mean(false); }
-		double sum;
+		double sum = 0.0;
 		for(double element:distribution) {
 			sum += pow(element - mean.val, n);
 		}
