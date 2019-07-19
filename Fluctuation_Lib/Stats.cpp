@@ -148,6 +148,8 @@ void Stats::calc_kurtosis(bool err) {
 // Calculate the cumulant of order n of the distribution if not already calculated.
 // Calculate corresponding uncertainty if err and not already calculated.
 void Stats::calc_cumulant(int order, bool err) {
+	vector<double> &mu = central_moment; //Alias central_moment as mu to shorten calculations.
+
 	if(!cumulant_calc[order].val) {
 		if(order == 1) {
 			calc_mean(false);
@@ -156,52 +158,43 @@ void Stats::calc_cumulant(int order, bool err) {
 		}
 		else if(order == 2) {
 			calc_central_moment(2);
-			cumulant[order].val = central_moment[2];
+			cumulant[order].val = mu[2];
 			cumulant_calc[order].val = true;
 		}
 		else if(order == 3) {
 			calc_central_moment(3);
-			cumulant[order].val = central_moment[3];
+			cumulant[order].val = mu[3];
 			cumulant_calc[order].val = true;
 		}
 		else if(order == 4) {
 			calc_central_moment({2,4});
-			cumulant[order].val = central_moment[4] - 3 * pow(central_moment[2], 2);
+			cumulant[order].val = mu[4] - 3 * pow(mu[2], 2);
 			cumulant_calc[order].val = true;
 		}
 		else {
 			cout << "Cumulant of order " << order << " not implemented." << endl;
 		}
 	}
+
 	if(err && !cumulant_calc[order].err) {
 		if(order == 1) {
 			calc_central_moment(2);
-			cumulant[order].err = pow(central_moment[2] / distribution.size(), 0.5);
+			cumulant[order].err = pow(mu[2] / distribution.size(), 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else if(order == 2) {
 			calc_central_moment({2,4});
-			cumulant[order].err = pow((central_moment[4] - pow(central_moment[2], 2)) / distribution.size(), 0.5);
+			cumulant[order].err = pow((mu[4] - pow(mu[2], 2)) / distribution.size(), 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else if(order == 3) {
 			calc_central_moment({2,3,4,6});
-			double mu2 = central_moment[2];
-			double mu3 = central_moment[3];
-			double mu4 = central_moment[4];
-			double mu6 = central_moment[6];
-			cumulant[order].err = pow(( mu6 - pow(mu3,2) + 9*pow(mu2,3) - 6*mu2*mu4 ) / distribution.size(), 0.5);
+			cumulant[order].err = pow(( mu[6] - pow(mu[3],2) + 9*pow(mu[2],3) - 6*mu[2]*mu[4] ) / distribution.size(), 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else if(order == 4) {
 			calc_central_moment({2,3,4,5,6,8});
-			double mu2 = central_moment[2];
-			double mu3 = central_moment[3];
-			double mu4 = central_moment[4];
-			double mu5 = central_moment[5];
-			double mu6 = central_moment[6];
-			double mu8 = central_moment[8];
-			cumulant[order].err = pow(( mu8 - 12*mu6*mu2 - 8*mu5*mu3 - pow(mu4, 2) + 48*mu4*pow(mu2,2) + 64*pow(mu3,2)*mu2 - 36*pow(mu2,4) ) / distribution.size(), 0.5);
+			cumulant[order].err = pow(( mu[8] - 12*mu[6]*mu[2] - 8*mu[5]*mu[3] - pow(mu[4], 2) + 48*mu[4]*pow(mu[2],2) + 64*pow(mu[3],2)*mu[2] - 36*pow(mu[2],4) ) / distribution.size(), 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else {
