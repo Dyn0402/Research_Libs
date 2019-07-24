@@ -148,7 +148,7 @@ void Stats::calc_kurtosis(bool err) {
 // Calculate the cumulant of order n of the distribution if not already calculated.
 // Calculate corresponding uncertainty if err and not already calculated.
 void Stats::calc_cumulant(int order, bool err) {
-	vector<double> &mu = central_moment; //Alias central_moment as mu to shorten calculations.
+	map<int, double> &mu = central_moment; //Alias central_moment as mu to shorten calculations.
 
 	if(!cumulant_calc[order].val) {
 		if(order == 1) {
