@@ -12,6 +12,8 @@
 #include <tuple>
 #include <vector>
 
+#include <TH2.h>
+
 using namespace std;
 
 struct tree_data {
@@ -29,6 +31,7 @@ double get_raw_moment(vector<double> data, int n);
 
 vector<int> nproton_map_to_vec(map<int, int> nproton);
 vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios);
+TH2I* ratios_map_to_hist(map<int, map<int, int>> ratios, string name);
 void sum_tree_data(tree_data *base, tree_data add);
 
 vector<double> get_two_particle_correlation(vector<double> angles);
