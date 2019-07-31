@@ -17,6 +17,16 @@
 using namespace std;
 
 
+// Functions for measure struct. Should find a new home.
+measure<double> divide(measure<double> numerator, measure<double> denominator) {
+	measure<double> result;
+	result.val = numerator.val / denominator.val;
+	result.err = fabs(result.val) * pow(pow(numerator.err/numerator.val,2) + pow(denominator.err/denominator.val,2),0.5);
+
+	return(result);
+}
+
+
 // Default constructor
 Stats::Stats() {
 	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};

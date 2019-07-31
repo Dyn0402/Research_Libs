@@ -27,6 +27,9 @@ struct measure {
 	T val, err;
 };
 
+// Equations to propagate error with measure type. Should probably build into its own class?
+measure<double> divide(measure<double> numerator, measure<double> denominator);
+
 
 class Stats {
 public:

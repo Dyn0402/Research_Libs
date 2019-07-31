@@ -23,7 +23,6 @@ vector<int> get_Rs(vector<double> angles, int divisions) {
 	vector<int> Rs(divisions, 0);
 	int bin;
 
-
 	if(angles.size() > 0) {
 		for(double angle:angles) {
 			bin = 0;
