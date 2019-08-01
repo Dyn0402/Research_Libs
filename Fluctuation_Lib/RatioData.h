@@ -21,7 +21,8 @@ private:
 	map<int, int> proton_dist;
 	int divs;
 
-	bool proton_dist_flag = false;
+	bool ratio_data_gen = false;
+	bool proton_dist_gen = false;
 
 	string nproton_file_pre = "nprotons";
 	vector<string> nproton_file_fields = {"centrality"};
@@ -45,10 +46,13 @@ public:
 	int get_divs();
 
 	// Setters
+	void set_ratio_data(map<int, map<int, int>> ratio_data_in);
 	void set_divs(int divs_in);
 
 	// Doers
-	void read_data_from_file(string path);
+	void read_data_from_file(string file_path);
+	void read_ratios_from_dir(string dir_path, int div, int cent = 99);
+	void write_ratios(string job_id, string dir_path, int div, int cent = 99);
 };
 
 
