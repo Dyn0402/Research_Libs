@@ -17,16 +17,7 @@
 using namespace std;
 
 
-// Functions for measure struct. Should find a new home.
-measure<double> divide(measure<double> numerator, measure<double> denominator) {
-	measure<double> result;
-	result.val = numerator.val / denominator.val;
-	result.err = fabs(result.val) * pow(pow(numerator.err/numerator.val,2) + pow(denominator.err/denominator.val,2),0.5);
-
-	return(result);
-}
-
-
+// Structors
 // Default constructor
 Stats::Stats() {
 	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
@@ -42,43 +33,52 @@ Stats::Stats(vector<double> data) {
 }
 
 
+
+// Getters
 // Return mean with error as measure struct
-measure<double> Stats::get_mean() {
+Measure Stats::get_mean() {
 	calc_mean(true);
-	return(mean);
+	Measure mean_out(mean.val, mean.err);
+	return(mean_out);
 }
 
 // Return standard deviation with error as measure struct
-measure<double> Stats::get_standard_deviation() {
+Measure Stats::get_standard_deviation() {
 	calc_standard_deviation(true);
-	return(standard_deviation);
+	Measure standard_deviation_out(standard_deviation.val, standard_deviation.err);
+	return(standard_deviation_out);
 }
 
 // Return skewness with error as measure struct
-measure<double> Stats::get_skewness() {
+Measure Stats::get_skewness() {
 	calc_skewness(true);
-	return(skewness);
+	Measure skewness_out(skewness.val, skewness.err);
+	return(skewness_out);
 }
 
 // Return kurtosis with error as measure struct
-measure<double> Stats::get_kurtosis() {
+Measure Stats::get_kurtosis() {
 	calc_kurtosis(true);
-	return(kurtosis);
+	Measure kurtosis_out(kurtosis.val, kurtosis.err);
+	return(kurtosis_out);
 }
 
 // Return cumulant of order n with error as measure struct
-measure<double> Stats::get_cumulant(int order) {
+Measure Stats::get_cumulant(int order) {
 	calc_cumulant(order);
-	return(cumulant[order]);
+	Measure cumulant_out(cumulant[order].val, cumulant[order].err);
+	return(cumulant_out);
 }
 
 
+// Setters
 // Set distribution to passed data vector
 void Stats::set_distribution(vector<double> data) {
 	distribution = data;
 }
 
 
+// Doers
 // Calculate the mean of the distribution if not already calculated.
 // Calculate corresponding uncertainty if err and not already calculated.
 void Stats::calc_mean(bool err) {

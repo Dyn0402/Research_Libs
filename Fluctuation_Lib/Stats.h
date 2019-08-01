@@ -14,6 +14,8 @@
 #include <map>
 #include <cmath>
 
+#include "Measure.h"
+
 using namespace std;
 
 
@@ -33,18 +35,22 @@ measure<double> divide(measure<double> numerator, measure<double> denominator);
 
 class Stats {
 public:
+	// Structors
 	Stats();
 	Stats(vector<double> data);
 
+	// Setters
 	void set_distribution(vector<double> data);
 
-	measure<double> get_skewness();
-	measure<double> get_standard_deviation();
-	measure<double> get_mean();
-	measure<double> get_kurtosis();
-	measure<double> get_cumulant(int order);
+	// Getters
+	Measure get_skewness();
+	Measure get_standard_deviation();
+	Measure get_mean();
+	Measure get_kurtosis();
+	Measure get_cumulant(int order);
 
 private:
+	// Doers
 	void calc_mean(bool err = true);
 	void calc_standard_deviation(bool err = true);
 	void calc_skewness(bool err = true);
