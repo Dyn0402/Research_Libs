@@ -33,7 +33,11 @@ map<int, map<int, int>> RatioData::get_ratio_data() {
 }
 
 map<int, int> RatioData::get_proton_dist() {
-	//
+	if(!proton_dist_flag) {
+		gen_proton_dist();
+	}
+
+	return proton_dist;
 }
 
 
@@ -58,5 +62,15 @@ void RatioData::read_data_from_file(string path) {
 				}
 			}
 		}
+	}
+}
+
+
+void RatioData::gen_proton_dist() {
+	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
+		for(pair<int, int> proton_per_div:proton_per_event.second) {
+			proton_dist[proton_per_event.first] += proton_per_div.second;
+		}
+		proton_dist[proton_per_event.first] /= divs;
 	}
 }

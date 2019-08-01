@@ -21,6 +21,8 @@ private:
 	map<int, int> proton_dist;
 	int divs;
 
+	bool proton_dist_flag = false;
+
 	string nproton_file_pre = "nprotons";
 	vector<string> nproton_file_fields = {"centrality"};
 	char file_name_delimeter = '_';
@@ -28,6 +30,9 @@ private:
 	string ratios_file_pre = "ratios";
 	vector<string> ratios_file_fields = {"divisions", "centrality"};
 	string file_ext = ".txt";
+
+	// Doers
+	void gen_proton_dist();
 
 public:
 	// Structors
