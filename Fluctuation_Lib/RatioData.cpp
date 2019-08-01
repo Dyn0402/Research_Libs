@@ -19,7 +19,7 @@ using namespace std;
 
 // Structors
 RatioData::RatioData() {
-	// Nothing
+	divs = 0;
 }
 
 RatioData::~RatioData() {
@@ -32,9 +32,15 @@ map<int, map<int, int>> RatioData::get_ratio_data() {
 	return ratio_data;
 }
 
+map<int, int> RatioData::get_proton_dist() {
+	//
+}
+
 
 // Setters
-
+void RatioData::set_divs(int divs_in) {
+	divs = divs_in;
+}
 
 
 // Doers

@@ -18,6 +18,8 @@ using namespace std;
 class RatioData {
 private:
 	map<int, map<int, int>> ratio_data;
+	map<int, int> proton_dist;
+	int divs;
 
 	string nproton_file_pre = "nprotons";
 	vector<string> nproton_file_fields = {"centrality"};
@@ -34,9 +36,11 @@ public:
 
 	// Getters
 	map<int, map<int, int>> get_ratio_data();
-	map<int, int> get_proton_dist;
+	map<int, int> get_proton_dist();
+	int get_divs();
 
 	// Setters
+	void set_divs(int divs_in);
 
 	// Doers
 	void read_data_from_file(string path);
