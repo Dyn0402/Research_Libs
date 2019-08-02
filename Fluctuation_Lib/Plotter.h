@@ -9,8 +9,11 @@
 #define PLOTTER_H_
 
 
+#include <vector>
 #include <string>
 #include <map>
+
+#include <TFile.h>
 
 #include "Measure.h"
 
@@ -21,6 +24,15 @@ class Plotter {
 private:
 	int can_w = 800;
 	int can_h = 800;
+
+	string style_type = "mean";
+
+	map<string, vector<int>> marker_styles = { {"mean", {24, 25, 26, 27, 28, 30} } };
+	map<string, vector<int>> marker_colors = { {"mean", {1, 2, 8, 4, 6, 9} } };
+
+	string graph_option = "APL";
+
+	double marker_size = 1;
 
 public:
 	// Structors
@@ -36,8 +48,7 @@ public:
 	void set_can_h(int h);
 
 	// Doers
-	void canvas_2d_dist(map<int, map<int, int>> dist, TFile *out_file, int div, string name);
-	void athic_stat_vs_centrality(map<int, map<int, map<int, map<string, measure<double>>>>> stats, string name);
+	void moments_multi(map<double, map<double, Measure>> stats, string name, string multi_var_name, string x_var_name);
 };
 
 

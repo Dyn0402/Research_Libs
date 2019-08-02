@@ -12,6 +12,8 @@
 #include <string>
 #include <map>
 
+#include <TFile.h>
+
 using namespace std;
 
 
@@ -37,7 +39,7 @@ private:
 
 public:
 	// Structors
-	RatioData();
+	RatioData(int divisions);
 	~RatioData();
 
 	// Getters
@@ -53,6 +55,9 @@ public:
 	void read_data_from_file(string file_path);
 	void read_ratios_from_dir(string dir_path, int div, int cent = 99);
 	void write_ratios(string job_id, string dir_path, int div, int cent = 99);
+
+	// Plotters
+	void canvas_2d_dist(TFile *out_file, string name, double p_clust = -99);
 };
 
 

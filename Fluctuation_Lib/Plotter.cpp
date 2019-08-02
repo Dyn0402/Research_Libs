@@ -8,11 +8,17 @@
 
 #include <string>
 #include <map>
+#include <cmath>
+#include <limits>
 
 #include <TFile.h>
 #include <TH1.h>
 #include <TH2.h>
 #include <TF1.h>
+#include <TLine.h>
+#include <TGraph.h>
+#include <TMultiGraph.h>
+#include <TGraphErrors.h>
 #include <TCanvas.h>
 
 #include "Plotter.h"
@@ -32,71 +38,45 @@ Plotter::~Plotter() {
 }
 
 
-void canvas_2d_dist(map<int, map<int, int>> dist, TFile *out_file, int div, string name) {
-	out_file->cd();
-	TH2I *hist = ratios_map_to_hist(dist, name);
-	TCanvas *can = new TCanvas(name.data()); // Memory leak
-	TF1 *avg_line = new TF1(name.data(), ("x/"+to_string(div)).data(), -0.5, 0.5+(--dist.end())->first);
-	TF1 *max_line = new TF1((name+"max").data(), "x", -0.5, 0.5+(--dist.end())->first);
-	max_line->SetLineColor(4);
-	can->SetLogz();
-	hist->Draw("colz");
-	max_line->Draw("same");
-	avg_line->Draw("same");
-	hist->Write();
-	can->Write();
-}
-
-
-void moments_multi(map<double, map<double, map<double, map<string, Measure>>>> stats, string name) {
-	int div = 6; //Hardcode, fix.
-	auto *can = new TCanvas(name.data(), name.data(), plot::canvas_width, plot::canvas_height);
-	can->Divide(ceil(pow(data.size(),0.5)), ceil(data.size()/ceil(pow(data.size(), 0.5))));
-	int can_index = 1;
-	for(string stat:analysis::stat_names) {
-		can->cd(can_index);
-		auto *mg = new TMultiGraph();
-		mg->SetNameTitle(stat.data(), stat.data());
-		double x_min = numeric_limits<double>::max();
-		double x_max = numeric_limits<double>::min();
-		double y_max = numeric_limits<double>::min();
-		double y_min = numeric_limits<double>::max();
-		for(int energy:analysis::energy_list) {
-			vector<double> stat_vals, cent_val, stat_err, cent_err;
-			measure<double> stat_meas;
-			for(int cent_index=15; cent_index > 5; cent_index--) {
-				cent_val.push_back((15-cent_index)*plot::centrality_slope + plot::centrality_intercept);
-				cent_err.push_back(0.0);
-				stat_meas = stats[energy][div][cent_index][stat];
-				stat_vals.push_back(stat_meas.val);
-				stat_err.push_back(stat_meas.err);
-				if(stat_meas.val + stat_meas.err > y_max) { y_max = stat_meas.val + stat_meas.err; }
-				if(stat_meas.val - stat_meas.err < y_min) { y_min = stat_meas.val - stat_meas.err; }
-			}
-			TGraphErrors *graph = graph_x_vs_y_err(cent_val, stat_vals, cent_err, stat_err);
-			graph->SetNameTitle((to_string(plot::energy_match[energy]).substr(0,4) + " GeV").data());
-			graph->SetMarkerStyle(plot::energy_marker_styles[energy]);
-			graph->SetMarkerColor(plot::energy_marker_colors[energy]);
-			graph->SetMarkerSize(plot::energy_marker_sizes[energy]);
-			mg->Add(graph, "AP");
-			if(*min_element(cent_val.begin(), cent_val.end()) < x_min) { x_min = *min_element(cent_val.begin(), cent_val.end()); }
-			if(*max_element(cent_val.begin(), cent_val.end()) > x_max) { x_max = *max_element(cent_val.begin(), cent_val.end()); }
+void Plotter::moments_multi(map<double, map<double, Measure>> stats, string name, string multi_var_name, string x_var_name) {
+	auto *can = new TCanvas(name.data(), name.data(), can_w, can_h);
+	auto *mg = new TMultiGraph();
+	mg->SetNameTitle(name.data(), name.data());
+	double x_min = numeric_limits<double>::max();
+	double x_max = numeric_limits<double>::min();
+	double y_max = numeric_limits<double>::min();
+	double y_min = numeric_limits<double>::max();
+	int graph_index = 0;
+	for(pair<double, map<double, Measure>> multi_var:stats) {
+		vector<double> x_val, y_val, x_err, y_err;
+		for(pair<double, Measure> x_var:multi_var.second) {
+			y_val.push_back(x_var.second.get_val());
+			y_err.push_back(x_var.second.get_err());
+			x_val.push_back(x_var.first);
+			x_err.push_back(0);
+			if(y_val.back() + y_err.back() > y_max) { y_max = y_val.back() + y_err.back(); }
+			if(y_val.back() - y_err.back() < y_min) { y_min = y_val.back() - y_err.back(); }
 		}
-		double x_range = x_max - x_min;
-		double y_range = y_max - y_min;
-		mg->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
-		mg->GetXaxis()->SetRangeUser(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
-		mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
-		mg->GetXaxis()->SetTitle("Centrality (%)");
-		mg->Draw("AP"); // Multigraph memory leak, fix.
-		if(stat == "mean") {
-//			TLegend *leg = new TLegend();
-//			leg->Draw();
-			gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
-		}
-		can_index++;
+		TGraphErrors *graph = new TGraphErrors((int)x_val.size(), x_val.data(), y_val.data(), x_err.data(), y_err.data());
+		graph->SetNameTitle((multi_var_name + " " + to_string(multi_var.first).substr(0,5)).data());
+		graph->SetMarkerStyle(marker_styles[style_type][graph_index%marker_styles[style_type].size()]);
+		graph->SetMarkerColor(marker_colors[style_type][graph_index%marker_styles[style_type].size()]);
+		graph->SetMarkerSize(marker_size);
+		graph->SetLineColor(marker_colors[style_type][graph_index%marker_styles[style_type].size()]);
+		mg->Add(graph, graph_option.data());
+		if(*min_element(x_val.begin(), x_val.end()) < x_min) { x_min = *min_element(x_val.begin(), x_val.end()); }
+		if(*max_element(x_val.begin(), x_val.end()) > x_max) { x_max = *max_element(x_val.begin(), x_val.end()); }
+		graph_index++;
 	}
+	double x_range = x_max - x_min;
+	double y_range = y_max - y_min;
+	mg->GetXaxis()->SetLimits(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
+	mg->GetXaxis()->SetRangeUser(x_min - 0.1 * x_range, x_max + 0.1 * x_range);
+	mg->GetYaxis()->SetLimits(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+	mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
+	mg->GetXaxis()->SetTitle(x_var_name.data());
+	mg->Draw(graph_option.data()); // Multigraph memory leak, fix.
+	gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
 	can->Write(name.data());
 	delete can;
 }

@@ -13,14 +13,21 @@
 #include <map>
 #include <dirent.h>
 
+#include <TFile.h>
+#include <TH1.h>
+#include <TH2.h>
+#include <TF1.h>
+#include <TLine.h>
+#include <TCanvas.h>
+
 #include "RatioData.h"
 #include "file_io.h"
 
 using namespace std;
 
 // Structors
-RatioData::RatioData() {
-	divs = 0;
+RatioData::RatioData(int divisions) {
+	divs = divisions;
 }
 
 RatioData::~RatioData() {
@@ -133,4 +140,29 @@ void RatioData::gen_proton_dist() {
 }
 
 
+void RatioData::canvas_2d_dist(TFile *out_file, string name, double p_clust) {
+	out_file->cd();
+	TH2I *hist = ratios_map_to_hist(ratio_data, name);
+	TCanvas *can = new TCanvas((name+"_Can").data());
+	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--ratio_data.end())->first);
+	TF1 *max_line = new TF1((name+"_max").data(), "x", -0.5, 0.5+(--ratio_data.end())->first);
+	max_line->SetLineColor(4);
+	can->SetLogz();
+	hist->Draw("colz");
+	max_line->Draw("same");
+	avg_line->Draw("same");
 
+	if(p_clust != -1) {
+		int eff_bound = ceil(1.5 / p_clust); // Minimum num protons to get a grouping of 2 (therefore see any effect)
+		TLine *eff_line = new TLine(eff_bound, 0, eff_bound, eff_bound);
+		eff_line->SetLineColor(kRed);
+		eff_line->Draw("same");
+	}
+
+	can->Write();
+
+	delete avg_line;
+	delete max_line;
+	delete hist;
+	delete can;
+}
