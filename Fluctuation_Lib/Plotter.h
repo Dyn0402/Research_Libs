@@ -30,7 +30,7 @@ private:
 	map<string, vector<int>> marker_styles = { {"mean", {24, 25, 26, 27, 28, 30} } };
 	map<string, vector<int>> marker_colors = { {"mean", {1, 2, 8, 4, 6, 9} } };
 
-	string graph_option = "APL";
+	string graph_option = "AL";
 
 	double marker_size = 1;
 
