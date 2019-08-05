@@ -58,7 +58,7 @@ void Plotter::moments_multi(map<double, map<double, Measure>> stats, string name
 			if(y_val.back() - y_err.back() < y_min) { y_min = y_val.back() - y_err.back(); }
 		}
 		TGraphErrors *graph = new TGraphErrors((int)x_val.size(), x_val.data(), y_val.data(), x_err.data(), y_err.data());
-		graph->SetNameTitle((multi_var_name + " " + to_string(multi_var.first).substr(0,5)).data());
+		graph->SetNameTitle((multi_var_name + " " + to_string(multi_var.first).substr(0,4)).data());
 		graph->SetMarkerStyle(marker_styles[style_type][graph_index%marker_styles[style_type].size()]);
 		graph->SetMarkerColor(marker_colors[style_type][graph_index%marker_styles[style_type].size()]);
 		graph->SetMarkerSize(marker_size);
@@ -76,7 +76,7 @@ void Plotter::moments_multi(map<double, map<double, Measure>> stats, string name
 	mg->GetYaxis()->SetRangeUser(y_min - 0.1 * y_range, y_max + 0.1 * y_range);
 	mg->GetXaxis()->SetTitle(x_var_name.data());
 	mg->Draw(graph_option.data()); // Multigraph memory leak, fix.
-	gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "p");
+	gPad->BuildLegend(0.3, 0.21, 0.3, 0.21, "", "l");
 	can->Write(name.data());
 	delete can;
 }
