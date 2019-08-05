@@ -21,10 +21,14 @@ class RatioData {
 private:
 	map<int, map<int, int>> ratio_data;
 	map<int, int> proton_dist;
+	vector<double> ratio_vec;
+	map<double, int> ratio_hist;
 	int divs;
 
 	bool ratio_data_gen = false;
 	bool proton_dist_gen = false;
+	bool ratio_vec_gen = false;
+	bool ratio_hist_gen = false;
 
 	string nproton_file_pre = "nprotons";
 	vector<string> nproton_file_fields = {"centrality"};
@@ -36,6 +40,8 @@ private:
 
 	// Doers
 	void gen_proton_dist();
+	void gen_ratio_vec();
+	void gen_ratio_hist();
 
 public:
 	// Structors
@@ -45,6 +51,8 @@ public:
 	// Getters
 	map<int, map<int, int>> get_ratio_data();
 	map<int, int> get_proton_dist();
+	vector<double> get_ratio_vec();
+	map<double, int> get_ratio_hist();
 	int get_divs();
 
 	// Setters

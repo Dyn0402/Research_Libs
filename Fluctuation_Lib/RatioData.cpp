@@ -51,6 +51,22 @@ map<int, int> RatioData::get_proton_dist() {
 	return proton_dist;
 }
 
+vector<double> RatioData::get_ratio_vec() {
+	if(!ratio_vec_gen) {
+		gen_ratio_vec();
+	}
+
+	return ratio_vec;
+}
+
+map<double, int> RatioData::get_ratio_hist() {
+	if(!ratio_vec_gen) {
+		gen_ratio_hist();
+	}
+
+	return ratio_vec;
+}
+
 
 // Setters
 void RatioData::set_ratio_data(map<int, map<int, int>> ratio_data_in) {
@@ -137,6 +153,28 @@ void RatioData::gen_proton_dist() {
 		}
 		proton_dist[proton_per_event.first] /= divs;
 	}
+	proton_dist_gen = true;
+}
+
+void RatioData::gen_ratio_vec() {
+	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
+		for(pair<int, int> proton_per_div:proton_per_event.second) {
+			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
+			vector<double> ratio_batch(proton_per_div.second, ratio);
+			ratio_vec.insert(ratio_vec.end(), ratio_batch.begin(), ratio_batch.end());
+		}
+	}
+	ratio_vec_gen = true;
+}
+
+void RatioData::gen_ratio_hist() {
+	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
+		for(pair<int, int> proton_per_div:proton_per_event.second) {
+			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
+			ratio_hist[ratio] = proton_per_div.second;
+		}
+	}
+	ratio_hist_gen = true;
 }
 
 
