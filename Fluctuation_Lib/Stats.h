@@ -38,9 +38,11 @@ public:
 	// Structors
 	Stats();
 	Stats(vector<double> data);
+	Stats(map<double, int> data);
 
 	// Setters
 	void set_distribution(vector<double> data);
+	void Stats::set_distribution(map<double, int> data);
 
 	// Getters
 	Measure get_skewness();
@@ -48,6 +50,7 @@ public:
 	Measure get_mean();
 	Measure get_kurtosis();
 	Measure get_cumulant(int order);
+	int get_dist_num();
 
 private:
 	// Doers
@@ -58,8 +61,14 @@ private:
 	void calc_cumulant(int n, bool err = true);
 	void calc_central_moment(int n);
 	void calc_central_moment(vector<int> ns);
+	void calc_dist_num();
 
 	vector<double> distribution;
+	map<double, int> distribution_hist;
+
+	int dist_num;
+
+	string dist_type; // "vec" for vector<double>, "hist" for map<double, int>
 
 	measure<double> mean, standard_deviation, skewness, kurtosis;
 	map<int, measure<double>> cumulant;

@@ -22,16 +22,27 @@ using namespace std;
 Stats::Stats() {
 	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
 	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	dist_type = "vec";
+	dist_num = 0;
 }
-
 
 // Constructor with distribution passed.
 Stats::Stats(vector<double> data) {
 	distribution = data;
 	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
 	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	dist_type = "vec";
+	calc_dist_num();
 }
 
+// Constructor with distribution passed as a histogram.
+Stats::Stats(map<double, int> data) {
+	distribution_hist = data;
+	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
+	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	dist_type = "hist";
+	calc_dist_num();
+}
 
 
 // Getters
@@ -70,11 +81,23 @@ Measure Stats::get_cumulant(int order) {
 	return(cumulant_out);
 }
 
+// Return number of entries in distribution
+int Stats::get_dist_num() {
+	return(dist_num);
+}
+
 
 // Setters
 // Set distribution to passed data vector
 void Stats::set_distribution(vector<double> data) {
 	distribution = data;
+	dist_type = "vec";
+}
+
+// Set distribution to passed data map
+void Stats::set_distribution(map<double, int> data) {
+	distribution_hist = data;
+	dist_type = "hist";
 }
 
 
@@ -84,15 +107,22 @@ void Stats::set_distribution(vector<double> data) {
 void Stats::calc_mean(bool err) {
 	if(!mean_calc.val) {
 		double sum = 0.0;
-		for(double element:distribution) {
-			sum += element;
-		}
-		mean.val = sum / distribution.size();
+		if(dist_type == "vec") {
+			for(double element:distribution) {
+				sum += element;
+			}
+			mean.val = sum / distribution.size();
+		} else if(dist_type == "hist") {
+			for(pair<double, int> entry:distribution_hist) {
+				sum += entry.second * entry.first;
+			}
+			mean.val = sum / dist_num;
+		} else { cout << "dist_type not recognized." << endl; }
 		mean_calc.val = true;
 	}
 	if(err && !mean_calc.err) {
 		calc_standard_deviation(false);
-		mean.err = standard_deviation.val / pow((double)distribution.size(), 0.5);
+		mean.err = standard_deviation.val / pow(dist_num, 0.5);
 		mean_calc.err = true;
 	}
 }
@@ -108,7 +138,7 @@ void Stats::calc_standard_deviation(bool err) {
 	}
 	if(err && !standard_deviation_calc.err) {
 		calc_central_moment(4);
-		standard_deviation.err = pow((central_moment[4] / pow(standard_deviation.val, 4) - 1) / (4 * distribution.size()), 0.5);
+		standard_deviation.err = pow((central_moment[4] / pow(standard_deviation.val, 4) - 1) / (4 * dist_num), 0.5);
 		standard_deviation_calc.err = true;
 	}
 }
@@ -128,7 +158,7 @@ void Stats::calc_skewness(bool err) {
 		double m4 = central_moment[4] / pow(standard_deviation.val, 4);
 		double m5 = central_moment[5] / pow(standard_deviation.val, 5);
 		double m6 = central_moment[6] / pow(standard_deviation.val, 6);
-		skewness.err = pow((9 - 6*m4 + pow(m3,2) * (35 + 9*m4) / 4 - 3*m3*m5 + m6) / distribution.size(), 0.5);
+		skewness.err = pow((9 - 6*m4 + pow(m3,2) * (35 + 9*m4) / 4 - 3*m3*m5 + m6) / dist_num, 0.5);
 		skewness_calc.err = true;
 	}
 }
@@ -149,7 +179,7 @@ void Stats::calc_kurtosis(bool err) {
 		double m5 = central_moment[5] / pow(standard_deviation.val, 5);
 		double m6 = central_moment[6] / pow(standard_deviation.val, 6);
 		double m8 = central_moment[8] / pow(standard_deviation.val, 8);
-		kurtosis.err = pow((-pow(m4, 2) + 4*pow(m4, 3) + 16*pow(m3, 2) * (1 + m4) - 8*m3*m5 - 4*m4*m6 + m8) / distribution.size(), 0.5);
+		kurtosis.err = pow((-pow(m4, 2) + 4*pow(m4, 3) + 16*pow(m3, 2) * (1 + m4) - 8*m3*m5 - 4*m4*m6 + m8) / dist_num, 0.5);
 		kurtosis_calc.err = true;
 	}
 }
@@ -189,22 +219,22 @@ void Stats::calc_cumulant(int order, bool err) {
 	if(err && !cumulant_calc[order].err) {
 		if(order == 1) {
 			calc_central_moment(2);
-			cumulant[order].err = pow(mu[2] / distribution.size(), 0.5);
+			cumulant[order].err = pow(mu[2] / dist_num, 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else if(order == 2) {
 			calc_central_moment({2,4});
-			cumulant[order].err = pow((mu[4] - pow(mu[2], 2)) / distribution.size(), 0.5);
+			cumulant[order].err = pow((mu[4] - pow(mu[2], 2)) / dist_num, 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else if(order == 3) {
 			calc_central_moment({2,3,4,6});
-			cumulant[order].err = pow(( mu[6] - pow(mu[3],2) + 9*pow(mu[2],3) - 6*mu[2]*mu[4] ) / distribution.size(), 0.5);
+			cumulant[order].err = pow(( mu[6] - pow(mu[3],2) + 9*pow(mu[2],3) - 6*mu[2]*mu[4] ) / dist_num, 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else if(order == 4) {
 			calc_central_moment({2,3,4,5,6,8});
-			cumulant[order].err = pow(( mu[8] - 12*mu[6]*mu[2] - 8*mu[5]*mu[3] - pow(mu[4], 2) + 48*mu[4]*pow(mu[2],2) + 64*pow(mu[3],2)*mu[2] - 36*pow(mu[2],4) ) / distribution.size(), 0.5);
+			cumulant[order].err = pow(( mu[8] - 12*mu[6]*mu[2] - 8*mu[5]*mu[3] - pow(mu[4], 2) + 48*mu[4]*pow(mu[2],2) + 64*pow(mu[3],2)*mu[2] - 36*pow(mu[2],4) ) / dist_num, 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else {
@@ -227,10 +257,30 @@ void Stats::calc_central_moment(int n) {
 	if(!central_moments_calc[n]) {
 		if(!mean_calc.val) { calc_mean(false); }
 		double sum = 0.0;
-		for(double element:distribution) {
-			sum += pow(element - mean.val, n);
-		}
-		central_moment[n] = sum / distribution.size();
+		if(dist_type == "vec") {
+			for(double element:distribution) {
+				sum += pow(element - mean.val, n);
+			}
+		} else if(dist_type == "hist") {
+			for(pair<double, int> entry:distribution_hist) {
+				sum += entry.second * pow(entry.first - mean.val, n);
+			}
+		} else { cout << "dist_type not recognized." << endl; }
+
+		central_moment[n] = sum / dist_num;
 		central_moments_calc[n] = true;
 	}
+}
+
+
+// Calculate number of entries in distribution.
+void Stats::calc_dist_num() {
+	if(dist_type == "vec") {
+		dist_num = distribution.size();
+	} else if(dist_type == "hist") {
+		dist_num = 0;
+		for(pair<double, int> entry:distribution_hist) {
+			dist_num += entry.second;
+		}
+	} else { cout << "dist_type not recognized." << endl; }
 }
