@@ -42,7 +42,7 @@ public:
 
 	// Setters
 	void set_distribution(vector<double> data);
-	void Stats::set_distribution(map<double, int> data);
+	void set_distribution(map<double, int> data);
 
 	// Getters
 	Measure get_skewness();

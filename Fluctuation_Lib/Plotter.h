@@ -46,6 +46,7 @@ public:
 	// Setters
 	void set_can_w(int w);
 	void set_can_h(int h);
+	void set_graph_option(string opt);
 
 	// Doers
 	void moments_multi(map<double, map<double, Measure>> stats, string name, string multi_var_name, string x_var_name);

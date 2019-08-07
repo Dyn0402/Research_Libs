@@ -64,7 +64,7 @@ map<double, int> RatioData::get_ratio_hist() {
 		gen_ratio_hist();
 	}
 
-	return ratio_vec;
+	return ratio_hist;
 }
 
 
