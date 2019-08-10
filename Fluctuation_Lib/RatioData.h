@@ -45,6 +45,7 @@ private:
 
 public:
 	// Structors
+	RatioData();
 	RatioData(int divisions);
 	~RatioData();
 
@@ -65,7 +66,9 @@ public:
 	void write_ratios(string job_id, string dir_path, int div, int cent = 99);
 
 	// Plotters
-	void canvas_2d_dist(TFile *out_file, string name, double p_clust = -99);
+	void canvas_2d_dist(string name, double p_clust = -99);
+	void canvas_1d_dist(string name);
+	void canvas_proton_dist(string name);
 };
 
 

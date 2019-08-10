@@ -19,6 +19,7 @@
 #include <TF1.h>
 #include <TLine.h>
 #include <TCanvas.h>
+#include <TStyle.h>
 
 #include "RatioData.h"
 #include "file_io.h"
@@ -26,6 +27,10 @@
 using namespace std;
 
 // Structors
+RatioData::RatioData() {
+	divs = 0;
+}
+
 RatioData::RatioData(int divisions) {
 	divs = divisions;
 }
@@ -178,8 +183,8 @@ void RatioData::gen_ratio_hist() {
 }
 
 
-void RatioData::canvas_2d_dist(TFile *out_file, string name, double p_clust) {
-	out_file->cd();
+// Plotters
+void RatioData::canvas_2d_dist(string name, double p_clust) {
 	TH2I *hist = ratios_map_to_hist(ratio_data, name);
 	TCanvas *can = new TCanvas((name+"_Can").data());
 	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--ratio_data.end())->first);
@@ -197,10 +202,57 @@ void RatioData::canvas_2d_dist(TFile *out_file, string name, double p_clust) {
 		eff_line->Draw("same");
 	}
 
+	gStyle->SetStatY(0.1);
+	gStyle->SetStatX(0.1);
+	hist->GetXaxis()->SetTitle("Number of Protons in Event");
+	hist->GetYaxis()->SetTitle("Number of Protons in Bin");
+	can->BuildLegend();
+
 	can->Write();
 
 	delete avg_line;
 	delete max_line;
+	delete hist;
+	delete can;
+}
+
+
+void RatioData::canvas_1d_dist(string name) {
+	TH1D *hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.1);
+	for(pair<int, map<int, int>> event:ratio_data) {
+		for(pair<int, int> bin:event.second) {
+			for(int i=0; i<bin.second; i++) {
+				hist->Fill(((double)bin.first) / event.first);
+			}
+		}
+	}
+	TCanvas *can = new TCanvas((name+"_Can").data());
+	can->SetLogy();
+	hist->Draw();
+
+	can->Write();
+
+
+	delete hist;
+	delete can;
+}
+
+
+void RatioData::canvas_proton_dist(string name) {
+	if(!proton_dist_gen) { gen_proton_dist(); }
+	TH1D *hist = new TH1D(name.data(), name.data(), 51, -0.5, 50.5);
+	for(pair<int, int> protons:proton_dist) {
+		for(int i = 0; i < protons.second; i++) {
+			hist->Fill(protons.first);
+		}
+	}
+	TCanvas *can = new TCanvas((name+"_Can").data());
+	hist->GetXaxis()->SetTitle("Number of Protons in Event");
+	hist->Draw();
+
+	can->Write();
+
+
 	delete hist;
 	delete can;
 }
