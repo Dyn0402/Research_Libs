@@ -25,12 +25,12 @@ private:
 	int can_w = 800;
 	int can_h = 800;
 
-	string style_type = "mean";
+	string style_type = "default";
 
-	map<string, vector<int>> marker_styles = { {"mean", {24, 25, 26, 27, 28, 30} } };
-	map<string, vector<int>> marker_colors = { {"mean", {1, 2, 8, 4, 6, 9} } };
+	map<string, vector<int>> marker_styles = { {"mean", {24, 25, 26, 27, 28, 30} }, {"default", {1, 1, 1, 1, 1, 1, 1, 1} } };
+	map<string, vector<int>> marker_colors = { {"mean", {1, 2, 8, 4, 6, 9} }, {"default", {1, 2, 8, 4, 6, 9} } };
 
-	string graph_option = "AL";
+	string graph_option = "APL";
 
 	double marker_size = 1;
 	double line_width = 2;

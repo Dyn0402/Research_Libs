@@ -69,7 +69,7 @@ void Plotter::moments_multi(map<double, map<double, Measure>> stats, string name
 			if(y_val.back() - y_err.back() < y_min) { y_min = y_val.back() - y_err.back(); }
 		}
 		TGraphErrors *graph = new TGraphErrors((int)x_val.size(), x_val.data(), y_val.data(), x_err.data(), y_err.data());
-		graph->SetNameTitle((multi_var_name + " " + to_string(multi_var.first)).data());
+		graph->SetNameTitle((multi_var_name + " " + to_string(multi_var.first).substr(0,4)).data());
 		graph->SetMarkerStyle(marker_styles[style_type][graph_index%marker_styles[style_type].size()]);
 		graph->SetMarkerColor(marker_colors[style_type][graph_index%marker_styles[style_type].size()]);
 		graph->SetMarkerSize(marker_size);
