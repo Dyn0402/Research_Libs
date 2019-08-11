@@ -43,6 +43,10 @@ void Plotter::set_graph_option(string opt) {
 	graph_option = opt;
 }
 
+void Plotter::set_line_width(double width) {
+	line_width = width;
+}
+
 
 // Doers
 void Plotter::moments_multi(map<double, map<double, Measure>> stats, string name, string multi_var_name, string x_var_name) {
@@ -69,6 +73,7 @@ void Plotter::moments_multi(map<double, map<double, Measure>> stats, string name
 		graph->SetMarkerStyle(marker_styles[style_type][graph_index%marker_styles[style_type].size()]);
 		graph->SetMarkerColor(marker_colors[style_type][graph_index%marker_styles[style_type].size()]);
 		graph->SetMarkerSize(marker_size);
+		graph->SetLineWidth(line_width);
 		graph->SetLineColor(marker_colors[style_type][graph_index%marker_styles[style_type].size()]);
 		mg->Add(graph, graph_option.data());
 		if(*min_element(x_val.begin(), x_val.end()) < x_min) { x_min = *min_element(x_val.begin(), x_val.end()); }

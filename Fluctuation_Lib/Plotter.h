@@ -33,6 +33,7 @@ private:
 	string graph_option = "AL";
 
 	double marker_size = 1;
+	double line_width = 2;
 
 public:
 	// Structors
@@ -47,6 +48,7 @@ public:
 	void set_can_w(int w);
 	void set_can_h(int h);
 	void set_graph_option(string opt);
+	void set_line_width(double width);
 
 	// Doers
 	void moments_multi(map<double, map<double, Measure>> stats, string name, string multi_var_name, string x_var_name);
