@@ -176,7 +176,7 @@ void RatioData::gen_ratio_hist() {
 	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
 		for(pair<int, int> proton_per_div:proton_per_event.second) {
 			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
-			ratio_hist[ratio] = proton_per_div.second;
+			ratio_hist[ratio] += proton_per_div.second;
 		}
 	}
 	ratio_hist_gen = true;
