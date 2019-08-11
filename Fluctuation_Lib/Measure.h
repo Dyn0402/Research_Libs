@@ -141,9 +141,7 @@ public:
 		err = err_in;
 	}
 
-
 };
-
 
 
 #endif /* MEASURE_H_ */
