@@ -218,7 +218,7 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 	hist->GetYaxis()->SetTitle("Number of Protons in Bin");
 	legend->Draw();
 
-	can->Write("2dHist");
+	can->Write();
 
 	delete avg_line;
 	delete max_line;
@@ -260,7 +260,7 @@ void RatioData::canvas_proton_dist(string name) {
 	hist->GetXaxis()->SetTitle("Number of Protons in Event");
 	hist->Draw();
 
-	can->Write("protonDist");
+	can->Write();
 
 
 	delete hist;
