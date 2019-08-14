@@ -212,10 +212,12 @@ void sum_tree_data(tree_data *base, tree_data add) {
 
 vector<double> get_two_particle_correlation(vector<double> angles) {
 	vector<double> corrs;
-	for(unsigned i=0; i<angles.size(); i++) {
-		for(unsigned j=i+1; j<angles.size(); j++) {
+	int num_angles = (int) angles.size();
+	for(int i=0; i<num_angles-1; i++) {
+		for(int j=i+1; j<num_angles; j++) {
 			double cor = angles[j] - angles[i];
-			if(cor < 0) { cor+=2*M_PI; }
+			while(cor < 0) { cor+=2*M_PI; }
+			while(cor > 2*M_PI) { cor-=2*M_PI; }
 			corrs.push_back(cor);
 		}
 	}
