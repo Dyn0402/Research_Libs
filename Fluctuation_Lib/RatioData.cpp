@@ -20,6 +20,7 @@
 #include <TLine.h>
 #include <TCanvas.h>
 #include <TStyle.h>
+#include <TLegend.h>
 
 #include "RatioData.h"
 #include "file_io.h"
@@ -195,18 +196,23 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 	max_line->Draw("same");
 	avg_line->Draw("same");
 
+	auto legend = new TLegend(0.1, 0.7, 0.5, 0.9);
+	legend->AddEntry((name+"_avg").data(), ("Average Ratio (x/"+to_string(divs)+")").data(), "l");
+	legend->AddEntry((name+"_max").data(), "Maximum Ratio (x)", "l");
+
 	if(p_clust != -1) {
 		int eff_bound = ceil(1.5 / p_clust); // Minimum num protons to get a grouping of 2 (therefore see any effect)
 		TLine *eff_line = new TLine(eff_bound, 0, eff_bound, eff_bound);
 		eff_line->SetLineColor(kRed);
 		eff_line->Draw("same");
+		legend->AddEntry(eff_line, "Effect Boundary", "l");
 	}
 
 	gStyle->SetStatY(0.1);
 	gStyle->SetStatX(0.1);
 	hist->GetXaxis()->SetTitle("Number of Protons in Event");
 	hist->GetYaxis()->SetTitle("Number of Protons in Bin");
-	can->BuildLegend();
+	legend->Draw();
 
 	can->Write();
 
