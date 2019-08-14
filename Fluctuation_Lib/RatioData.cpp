@@ -21,6 +21,7 @@
 #include <TCanvas.h>
 #include <TStyle.h>
 #include <TLegend.h>
+#include <TPaveStats.h>
 
 #include "RatioData.h"
 #include "file_io.h"
@@ -196,7 +197,7 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 	max_line->Draw("same");
 	avg_line->Draw("same");
 
-	auto legend = new TLegend(0.1, 0.7, 0.5, 0.9);
+	auto legend = new TLegend(0.1, 0.5, 0.4, 0.64);
 	legend->AddEntry((name+"_avg").data(), ("Average Ratio (x/"+to_string(divs)+")").data(), "l");
 	legend->AddEntry((name+"_max").data(), "Maximum Ratio (x)", "l");
 
@@ -207,9 +208,14 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 		eff_line->Draw("same");
 		legend->AddEntry(eff_line, "Effect Boundary", "l");
 	}
-
-	gStyle->SetStatY(0.1);
-	gStyle->SetStatX(0.1);
+	gPad->Update();
+	TPaveStats *st = (TPaveStats*)hist->FindObject("stats");
+	st->SetX1NDC(0.1);
+	st->SetX2NDC(0.4);
+	st->SetY1NDC(0.9);
+	st->SetY2NDC(0.65);
+//	gStyle->SetStatY(0.1);
+//	gStyle->SetStatX(0.1);
 	hist->GetXaxis()->SetTitle("Number of Protons in Event");
 	hist->GetYaxis()->SetTitle("Number of Protons in Bin");
 	legend->Draw();
