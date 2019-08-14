@@ -214,8 +214,6 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 	st->SetX2NDC(0.4);
 	st->SetY1NDC(0.9);
 	st->SetY2NDC(0.65);
-//	gStyle->SetStatY(0.1);
-//	gStyle->SetStatX(0.1);
 	hist->GetXaxis()->SetTitle("Number of Protons in Event");
 	hist->GetYaxis()->SetTitle("Number of Protons in Bin");
 	legend->Draw();
