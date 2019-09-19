@@ -71,7 +71,7 @@ map<int, int> read_nprotons(string path, int cent) {
 		string file = dp->d_name;
 		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
 		if(fields[0] == io::nproton_file_pre) {
-			if(stoi(fields[4]) == cent) {
+			if(stoi(fields[2]) == cent) {
 				ifstream in_file(path+file);
 				string line;
 				if(in_file.is_open()) {
@@ -162,10 +162,12 @@ vector<int> get_centrals(string dir_path, int div) {
 	while((dp=readdir(files_dir)) != NULL) {
 		string file = dp->d_name;
 		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
-		if(stoi(fields[2]) == div) {
-			int cent = stoi(fields[4]);
-			if(count(centrals.begin(), centrals.end(), cent) == 0) {
-				centrals.push_back(cent);
+		if(fields[0] == io::ratios_file_pre) {
+			if(stoi(fields[2]) == div) {
+				int cent = stoi(fields[4]);
+				if(count(centrals.begin(), centrals.end(), cent) == 0) {
+					centrals.push_back(cent);
+				}
 			}
 		}
 	}
