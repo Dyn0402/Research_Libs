@@ -27,4 +27,6 @@ map<int, map<int, int>> read_ratios(string path, int div, int cent);
 vector<string> split_string_by_char(string str, char del);
 vector<string> get_files_in_dir(string dir_path, string ext, string out="name");
 
+vector<int> get_centrals(string dir_path, int div);
+
 #endif /* FILE_IO_H_ */

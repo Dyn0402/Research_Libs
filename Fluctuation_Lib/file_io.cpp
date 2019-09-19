@@ -71,7 +71,7 @@ map<int, int> read_nprotons(string path, int cent) {
 		string file = dp->d_name;
 		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
 		if(fields[0] == io::nproton_file_pre) {
-			if(stoi(fields[2]) == cent) {
+			if(stoi(fields[4]) == cent) {
 				ifstream in_file(path+file);
 				string line;
 				if(in_file.is_open()) {
@@ -151,4 +151,25 @@ vector<string> get_files_in_dir(string dir_path, string ext, string out) {
 	}
 
 	return(files);
+}
+
+
+// Return list of all centralities of specific div that exist in dir_path
+vector<int> get_centrals(string dir_path, int div) {
+	vector<int> centrals;
+	DIR* files_dir = opendir(dir_path.data());
+	struct dirent* dp;
+	while((dp=readdir(files_dir)) != NULL) {
+		string file = dp->d_name;
+		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
+		if(stoi(fields[2]) == div) {
+			int cent = stoi(fields[4]);
+			if(count(centrals.begin(), centrals.end(), cent) == 0) {
+				centrals.push_back(cent);
+			}
+		}
+	}
+	sort(centrals.begin(), centrals.end());
+
+	return(centrals);
 }
