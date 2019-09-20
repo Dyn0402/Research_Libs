@@ -31,10 +31,12 @@ using namespace std;
 // Structors
 RatioData::RatioData() {
 	divs = 0;
+	num_ratios = -1;
 }
 
 RatioData::RatioData(int divisions) {
 	divs = divisions;
+	num_ratios = -1;
 }
 
 RatioData::~RatioData() {
@@ -67,11 +69,26 @@ vector<double> RatioData::get_ratio_vec() {
 }
 
 map<double, int> RatioData::get_ratio_hist() {
-	if(!ratio_vec_gen) {
+	if(!ratio_hist_gen) {
 		gen_ratio_hist();
 	}
 
 	return ratio_hist;
+}
+
+
+int RatioData::get_num_ratios() {
+	if(num_ratios < 0) {
+		num_ratios = 0;
+		if(!ratio_hist_gen) {
+			gen_ratio_hist();
+		}
+		for(pair<double,int> ratio:ratio_hist) {
+			num_ratios =+ ratio.second;
+		}
+	}
+
+	return(num_ratios);
 }
 
 

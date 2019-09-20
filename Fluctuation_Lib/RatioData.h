@@ -24,6 +24,7 @@ private:
 	vector<double> ratio_vec;
 	map<double, int> ratio_hist;
 	int divs;
+	int num_ratios;
 
 	bool ratio_data_gen = false;
 	bool proton_dist_gen = false;
@@ -55,6 +56,7 @@ public:
 	vector<double> get_ratio_vec();
 	map<double, int> get_ratio_hist();
 	int get_divs();
+	int get_num_ratios();
 
 	// Setters
 	void set_ratio_data(map<int, map<int, int>> ratio_data_in);
