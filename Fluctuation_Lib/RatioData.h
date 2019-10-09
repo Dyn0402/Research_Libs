@@ -19,7 +19,7 @@ using namespace std;
 
 class RatioData {
 private:
-	map<int, map<int, int>> ratio_data;
+	map<int, map<int, int>> ratio_data;  // Base data storage
 	map<int, int> proton_dist;
 	vector<double> ratio_vec;
 	map<double, int> ratio_hist;
@@ -71,6 +71,9 @@ public:
 	void canvas_2d_dist(string name, double p_clust = -99);
 	void canvas_1d_dist(string name);
 	void canvas_proton_dist(string name);
+
+	// Operators
+	RatioData& operator += (RatioData& obj);
 };
 
 

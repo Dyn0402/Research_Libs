@@ -44,6 +44,20 @@ RatioData::~RatioData() {
 }
 
 
+// Operators
+RatioData& RatioData::operator += (RatioData& obj) {
+	map<int, map<int, int>> new_ratio_data = obj.get_ratio_data();
+
+	for(pair<int, map<int, int>> proton_per_event:new_ratio_data) {
+		for(pair<int, int> proton_per_div:proton_per_event.second) {
+			this->ratio_data[proton_per_event.first][proton_per_div.first] += proton_per_div.second;
+		}
+	}
+
+	return(*this);
+}
+
+
 // Getters
 map<int, map<int, int>> RatioData::get_ratio_data() {
 	if(!ratio_data_gen) {
@@ -84,7 +98,7 @@ int RatioData::get_num_ratios() {
 			gen_ratio_hist();
 		}
 		for(pair<double,int> ratio:ratio_hist) {
-			num_ratios =+ ratio.second;
+			num_ratios += ratio.second;
 		}
 	}
 
