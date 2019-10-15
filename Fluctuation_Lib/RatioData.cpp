@@ -54,6 +54,10 @@ RatioData& RatioData::operator += (RatioData& obj) {
 		}
 	}
 
+	if(this->ratio_data.size() > 0) {
+		this->ratio_data_gen = true;
+	}
+
 	return(*this);
 }
 
