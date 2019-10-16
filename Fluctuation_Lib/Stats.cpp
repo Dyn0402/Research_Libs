@@ -24,6 +24,7 @@ Stats::Stats() {
 	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
 	dist_type = "vec";
 	dist_num = 0;
+	nan_check = true;
 }
 
 // Constructor with distribution passed.
@@ -33,6 +34,7 @@ Stats::Stats(vector<double> data) {
 	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
 	dist_type = "vec";
 	calc_dist_num();
+	nan_check = true;
 }
 
 // Constructor with distribution passed as a histogram.
@@ -42,6 +44,7 @@ Stats::Stats(map<double, int> data) {
 	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
 	dist_type = "hist";
 	calc_dist_num();
+	nan_check = true;
 }
 
 
@@ -50,6 +53,11 @@ Stats::Stats(map<double, int> data) {
 Measure Stats::get_mean() {
 	calc_mean(true);
 	Measure mean_out(mean.val, mean.err);
+	if(nan_check) {
+		if(isnan(mean_out.get_val()) || isnan(mean_out.get_err())) {
+			cout << "WARNING: Nan in mean value or error" << endl;
+		}
+	}
 	return(mean_out);
 }
 
@@ -57,6 +65,11 @@ Measure Stats::get_mean() {
 Measure Stats::get_standard_deviation() {
 	calc_standard_deviation(true);
 	Measure standard_deviation_out(standard_deviation.val, standard_deviation.err);
+	if(nan_check) {
+		if(isnan(standard_deviation_out.get_val()) || isnan(standard_deviation_out.get_err())) {
+			cout << "WARNING: Nan in standard deviation value or error" << endl;
+		}
+	}
 	return(standard_deviation_out);
 }
 
@@ -64,6 +77,11 @@ Measure Stats::get_standard_deviation() {
 Measure Stats::get_skewness() {
 	calc_skewness(true);
 	Measure skewness_out(skewness.val, skewness.err);
+	if(nan_check) {
+		if(isnan(skewness_out.get_val()) || isnan(skewness_out.get_err())) {
+			cout << "WARNING: Nan in skewness value or error" << endl;
+		}
+	}
 	return(skewness_out);
 }
 
@@ -71,6 +89,11 @@ Measure Stats::get_skewness() {
 Measure Stats::get_kurtosis() {
 	calc_kurtosis(true);
 	Measure kurtosis_out(kurtosis.val, kurtosis.err);
+	if(nan_check) {
+		if(isnan(kurtosis_out.get_val()) || isnan(kurtosis_out.get_err())) {
+			cout << "WARNING: Nan in kurtosis value or error" << endl;
+		}
+	}
 	return(kurtosis_out);
 }
 
@@ -78,12 +101,22 @@ Measure Stats::get_kurtosis() {
 Measure Stats::get_cumulant(int order) {
 	calc_cumulant(order);
 	Measure cumulant_out(cumulant[order].val, cumulant[order].err);
+	if(nan_check) {
+		if(isnan(cumulant_out.get_val()) || isnan(cumulant_out.get_err())) {
+			cout << "WARNING: Nan in cumulant order " << order << " value or error" << endl;
+		}
+	}
 	return(cumulant_out);
 }
 
 // Return number of entries in distribution
 int Stats::get_dist_num() {
 	return(dist_num);
+}
+
+// Return boolean nan_check indicating whether nan warning is printed
+bool Stats::get_nan_check() {
+	return(nan_check);
 }
 
 
@@ -98,6 +131,11 @@ void Stats::set_distribution(vector<double> data) {
 void Stats::set_distribution(map<double, int> data) {
 	distribution_hist = data;
 	dist_type = "hist";
+}
+
+// Set nan_check indicating whether nan warning is printed
+void Stats::set_nan_check(bool nan_check) {
+	this->nan_check = nan_check;
 }
 
 

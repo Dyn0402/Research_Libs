@@ -43,6 +43,7 @@ public:
 	// Setters
 	void set_distribution(vector<double> data);
 	void set_distribution(map<double, int> data);
+	void set_nan_check(bool nan_check);
 
 	// Getters
 	Measure get_skewness();
@@ -51,6 +52,7 @@ public:
 	Measure get_kurtosis();
 	Measure get_cumulant(int order);
 	int get_dist_num();
+	bool get_nan_check();
 
 private:
 	// Doers
@@ -66,6 +68,7 @@ private:
 	vector<double> distribution;
 	map<double, int> distribution_hist;
 
+	bool nan_check;
 	int dist_num;
 
 	string dist_type; // "vec" for vector<double>, "hist" for map<double, int>
