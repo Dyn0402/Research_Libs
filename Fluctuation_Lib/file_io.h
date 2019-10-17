@@ -16,7 +16,7 @@
 using namespace std;
 
 
-void write_tree_data(string job_id, tree_data, string path="");
+void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path="");
 
 void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios, string path="");
 void write_nprotons(string job_id, map<int, map<int, int>> good_protons, string path="");

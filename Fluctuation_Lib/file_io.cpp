@@ -22,9 +22,8 @@ using namespace std;
 
 
 
-void write_tree_data(string job_id, tree_data data, string path) {
-	write_ratios(job_id, data.ratios, path);
-	write_nprotons(job_id, data.good_protons, path);
+void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path) {
+	write_ratios(job_id, data, path);
 }
 
 
