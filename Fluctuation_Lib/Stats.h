@@ -50,6 +50,7 @@ public:
 	Measure get_standard_deviation();
 	Measure get_mean();
 	Measure get_kurtosis();
+	Measure get_non_excess_kurtosis();
 	Measure get_cumulant(int order);
 	Measure get_raw_moment(int order);
 	Measure get_central_moment(int order);

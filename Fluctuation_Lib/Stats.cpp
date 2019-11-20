@@ -85,10 +85,24 @@ Measure Stats::get_skewness() {
 	return(skewness_out);
 }
 
-// Return kurtosis with error as Measure object
+// Return excess kurtosis with error as Measure object
 Measure Stats::get_kurtosis() {
 	calc_kurtosis(true);
 	Measure kurtosis_out(kurtosis.val, kurtosis.err);
+	if(nan_check) {
+		if(isnan(kurtosis_out.get_val()) || isnan(kurtosis_out.get_err())) {
+			cout << "WARNING: Nan in kurtosis value or error" << endl;
+		}
+	}
+	return(kurtosis_out);
+}
+
+// Return non-excess kurtosis with error as Measure object
+// 0.1
+Measure Stats::get_non_excess_kurtosis() {
+	calc_kurtosis(true);
+	Measure kurtosis_out(kurtosis.val, kurtosis.err);
+	kurtosis_out = kurtosis_out + 3;
 	if(nan_check) {
 		if(isnan(kurtosis_out.get_val()) || isnan(kurtosis_out.get_err())) {
 			cout << "WARNING: Nan in kurtosis value or error" << endl;
