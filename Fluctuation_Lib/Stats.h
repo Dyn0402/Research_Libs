@@ -51,6 +51,8 @@ public:
 	Measure get_mean();
 	Measure get_kurtosis();
 	Measure get_cumulant(int order);
+	Measure get_raw_moment(int order);
+	Measure get_central_moment(int order);
 	int get_dist_num();
 	bool get_nan_check();
 
@@ -63,6 +65,8 @@ private:
 	void calc_cumulant(int n, bool err = true);
 	void calc_central_moment(int n);
 	void calc_central_moment(vector<int> ns);
+	void calc_raw_moment(int n);
+	void calc_raw_moment(vector<int> ns);
 	void calc_dist_num();
 
 	vector<double> distribution;
@@ -76,10 +80,12 @@ private:
 	measure<double> mean, standard_deviation, skewness, kurtosis;
 	map<int, measure<double>> cumulant;
 	map<int, double> central_moment;
+	map<int, double> raw_moment;
 
 	measure<bool> mean_calc, standard_deviation_calc, skewness_calc, kurtosis_calc;
 	map<int, measure<bool>> cumulant_calc;
-	map<int, bool> central_moments_calc;
+	map<int, bool> central_moment_calc;
+	map<int, bool> raw_moment_calc;
 };
 
 #endif /* STATS_H_ */

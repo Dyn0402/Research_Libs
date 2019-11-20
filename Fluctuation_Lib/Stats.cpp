@@ -49,7 +49,7 @@ Stats::Stats(map<double, int> data) {
 
 
 // Getters
-// Return mean with error as measure struct
+// Return mean with error as Measure object
 Measure Stats::get_mean() {
 	calc_mean(true);
 	Measure mean_out(mean.val, mean.err);
@@ -61,7 +61,7 @@ Measure Stats::get_mean() {
 	return(mean_out);
 }
 
-// Return standard deviation with error as measure struct
+// Return standard deviation with error as Measure object
 Measure Stats::get_standard_deviation() {
 	calc_standard_deviation(true);
 	Measure standard_deviation_out(standard_deviation.val, standard_deviation.err);
@@ -73,7 +73,7 @@ Measure Stats::get_standard_deviation() {
 	return(standard_deviation_out);
 }
 
-// Return skewness with error as measure struct
+// Return skewness with error as Measure object
 Measure Stats::get_skewness() {
 	calc_skewness(true);
 	Measure skewness_out(skewness.val, skewness.err);
@@ -85,7 +85,7 @@ Measure Stats::get_skewness() {
 	return(skewness_out);
 }
 
-// Return kurtosis with error as measure struct
+// Return kurtosis with error as Measure object
 Measure Stats::get_kurtosis() {
 	calc_kurtosis(true);
 	Measure kurtosis_out(kurtosis.val, kurtosis.err);
@@ -97,7 +97,7 @@ Measure Stats::get_kurtosis() {
 	return(kurtosis_out);
 }
 
-// Return cumulant of order n with error as measure struct
+// Return cumulant of order n with error as Measure object
 Measure Stats::get_cumulant(int order) {
 	calc_cumulant(order);
 	Measure cumulant_out(cumulant[order].val, cumulant[order].err);
@@ -107,6 +107,30 @@ Measure Stats::get_cumulant(int order) {
 		}
 	}
 	return(cumulant_out);
+}
+
+// Return central moment of order n with error as Measure object
+Measure Stats::get_central_moment(int order) {
+	calc_central_moment(order);
+	Measure moment_out(central_moment[order], 0.0); // No error, need to add later.
+	if(nan_check) {
+		if(isnan(moment_out.get_val()) || isnan(moment_out.get_err())) {
+			cout << "WARNING: Nan in cumulant order " << order << " value or error" << endl;
+		}
+	}
+	return(moment_out);
+}
+
+// Return central moment of order n with error as Measure object
+Measure Stats::get_raw_moment(int order) {
+	calc_raw_moment(order);
+	Measure moment_out(raw_moment[order], 0.0); // No error, need to add later.
+	if(nan_check) {
+		if(isnan(moment_out.get_val()) || isnan(moment_out.get_err())) {
+			cout << "WARNING: Nan in cumulant order " << order << " value or error" << endl;
+		}
+	}
+	return(moment_out);
 }
 
 // Return number of entries in distribution
@@ -292,7 +316,7 @@ void Stats::calc_central_moment(vector<int> ns) {
 
 // Calculate nth order central moment if it has not already been calculated.
 void Stats::calc_central_moment(int n) {
-	if(!central_moments_calc[n]) {
+	if(!central_moment_calc[n]) {
 		if(!mean_calc.val) { calc_mean(false); }
 		double sum = 0.0;
 		if(dist_type == "vec") {
@@ -306,8 +330,44 @@ void Stats::calc_central_moment(int n) {
 		} else { cout << "dist_type not recognized." << endl; }
 
 		central_moment[n] = sum / dist_num;
-		central_moments_calc[n] = true;
+		central_moment_calc[n] = true;
 	}
+}
+
+
+// Calculate each raw moment in ns.
+void Stats::calc_raw_moment(vector<int> ns) {
+	vector<int> calc_ns;
+	for(int n:ns) {
+		if(!raw_moment_calc[n]) { calc_ns.push_back(n); }
+	}
+
+	map<int, double> sums;
+	if(dist_type == "vec") {
+		for(double element:distribution) {
+			for(int n:calc_ns) {
+				sums[n] += pow(element, n);
+			}
+		}
+	} else if(dist_type == "hist") {
+		for(pair<double, int> entry:distribution_hist) {
+			for(int n:calc_ns) {
+				sums[n] += entry.second * pow(entry.first, n);
+			}
+		}
+	} else { cout << "dist_type not recognized." << endl; }
+
+	for(int n:ns) {
+		raw_moment[n] = sums[n] / dist_num;
+		raw_moment_calc[n] = true;
+	}
+}
+
+
+// Calculate nth order raw moment if it has not already been calculated.
+void Stats::calc_raw_moment(int n) {
+	vector<int> ns = {n};
+	calc_raw_moment(ns);
 }
 
 
