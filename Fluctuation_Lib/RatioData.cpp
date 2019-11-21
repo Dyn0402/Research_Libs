@@ -222,6 +222,7 @@ void RatioData::gen_ratio_hist() {
 
 // Plotters
 void RatioData::canvas_2d_dist(string name, double p_clust) {
+	if(ratio_data.size() <= 0) { return; }  // Bad workaround, fix.
 	TH2I *hist = ratios_map_to_hist(ratio_data, name);
 	TCanvas *can = new TCanvas((name+"_Can").data());
 	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--ratio_data.end())->first);

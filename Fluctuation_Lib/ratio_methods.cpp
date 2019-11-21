@@ -175,6 +175,7 @@ vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios) {
 
 //Convert ratios map to vector.
 TH2I* ratios_map_to_hist(map<int, map<int, int>> ratios, string name) {
+	if(ratios.size() <= 0) {	return(new TH2I(name.data(), name.data(), 2, 0, 1, 2, 0, 1)); }  // Bad workaround, fix.
 	int max_n = (--ratios.end())->first;
 	TH2I *ratio_hist = new TH2I(name.data(), name.data(), max_n+1, -0.5, max_n+0.5, max_n+1, -0.5, max_n+0.5);
 	for(pair<int, map<int, int>> event:ratios) {
