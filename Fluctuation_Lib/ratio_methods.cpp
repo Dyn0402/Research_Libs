@@ -40,9 +40,11 @@ vector<int> get_Rs(vector<double> angles, int divisions) {
 //Rotate angle by rotate while keeping within 2pi range.
 double rotate_angle(double angle, double rotate) {
 	angle += rotate;
-	if(angle > 2 * M_PI) {
-		angle -= 2 * M_PI;
-	}
+	while(angle > 2 * M_PI) { angle -= 2 * M_PI; }
+	while(angle < 0) { angle += 2 * M_PI; }
+//	if(angle > 2 * M_PI) {
+//		angle -= 2 * M_PI;
+//	}
 	return(angle);
 }
 
