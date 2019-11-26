@@ -22,6 +22,7 @@ struct tree_data {
 };
 
 vector<int> get_Rs(vector<double> angles, int divisions);
+vector<int> get_Rs_fast(vector<double> angles, int divisions);
 double rotate_angle(double angle, double rotate);
 vector<double> rotate_angles(vector<double> angles, double rotate);
 
