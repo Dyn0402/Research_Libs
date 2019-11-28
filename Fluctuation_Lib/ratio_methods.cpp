@@ -43,9 +43,6 @@ double rotate_angle(double angle, double rotate) {
 	angle += rotate;
 	while(angle >= 2 * M_PI) { angle -= 2 * M_PI; }
 	while(angle < 0) { angle += 2 * M_PI; }
-//	if(angle > 2 * M_PI) {
-//		angle -= 2 * M_PI;
-//	}
 	return(angle);
 }
 
