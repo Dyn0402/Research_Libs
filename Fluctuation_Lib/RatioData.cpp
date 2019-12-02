@@ -228,12 +228,13 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--ratio_data.end())->first);
 	TF1 *max_line = new TF1((name+"_max").data(), "x", -0.5, 0.5+(--ratio_data.end())->first);
 	max_line->SetLineColor(4);
+	gStyle->SetOptStat("KSiouRMen");  //221112211
 	can->SetLogz();
 	hist->Draw("colz");
 	max_line->Draw("same");
 	avg_line->Draw("same");
 
-	auto legend = new TLegend(0.1, 0.5, 0.4, 0.64);
+	auto legend = new TLegend(0.1, 0.45, 0.4, 0.59);
 	legend->AddEntry((name+"_avg").data(), ("Average Ratio (x/"+to_string(divs)+")").data(), "l");
 	legend->AddEntry((name+"_max").data(), "Maximum Ratio (x)", "l");
 
@@ -249,7 +250,7 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 	st->SetX1NDC(0.1);
 	st->SetX2NDC(0.4);
 	st->SetY1NDC(0.9);
-	st->SetY2NDC(0.65);
+	st->SetY2NDC(0.6);
 	hist->GetXaxis()->SetTitle("Number of Protons in Event");
 	hist->GetYaxis()->SetTitle("Number of Protons in Bin");
 	legend->Draw();
@@ -267,14 +268,14 @@ void RatioData::canvas_1d_dist(string name) {
 	TH1D *hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.1);
 	for(pair<int, map<int, int>> event:ratio_data) {
 		for(pair<int, int> bin:event.second) {
-			for(int i=0; i<bin.second; i++) {
-				hist->Fill(((double)bin.first) / event.first);
-			}
+			hist->Fill(((double)bin.first) / event.first, bin.second);
 		}
 	}
 	TCanvas *can = new TCanvas((name+"_Can").data());
 	can->SetLogy();
-	hist->Draw();
+	gStyle->SetOptStat("KSiouRMen");  //221112211
+	hist->Draw("HIST");
+	gPad->Update();
 
 	can->Write();
 
@@ -288,13 +289,13 @@ void RatioData::canvas_proton_dist(string name) {
 	if(!proton_dist_gen) { gen_proton_dist(); }
 	TH1D *hist = new TH1D(name.data(), name.data(), 51, -0.5, 50.5);
 	for(pair<int, int> protons:proton_dist) {
-		for(int i = 0; i < protons.second; i++) {
-			hist->Fill(protons.first);
-		}
+		hist->Fill(protons.first, protons.second);
 	}
 	TCanvas *can = new TCanvas((name+"_Can").data());
 	hist->GetXaxis()->SetTitle("Number of Protons in Event");
-	hist->Draw();
+	gStyle->SetOptStat("KSiouRMen");  //221112211
+	hist->Draw("HIST");
+	gPad->Update();
 
 	can->Write();
 

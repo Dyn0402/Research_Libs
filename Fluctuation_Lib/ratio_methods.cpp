@@ -180,9 +180,7 @@ TH2I* ratios_map_to_hist(map<int, map<int, int>> ratios, string name) {
 	TH2I *ratio_hist = new TH2I(name.data(), name.data(), max_n+1, -0.5, max_n+0.5, max_n+1, -0.5, max_n+0.5);
 	for(pair<int, map<int, int>> event:ratios) {
 		for(pair<int, int> bin:event.second) {
-			for(int i=0; i<bin.second; i++) {
-				ratio_hist->Fill(event.first, bin.first);
-			}
+			ratio_hist->Fill(event.first, bin.first, bin.second);
 		}
 	}
 
