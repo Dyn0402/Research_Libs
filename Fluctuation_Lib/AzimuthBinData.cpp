@@ -103,7 +103,7 @@ map<double, int> AzimuthBinData::get_diff_hist(string div_flag) {
 	if(div_flag == "yes") {
 		map<double, int> div_diff_hist;
 		for(pair<double, int> diff:diff_hist) {
-			div_diff_hist[diff.first/diff_divisor] = diff.second;
+			div_diff_hist[diff.first/diff_divisor] += diff.second;
 		}
 		return div_diff_hist;
 	} else { return diff_hist; }
