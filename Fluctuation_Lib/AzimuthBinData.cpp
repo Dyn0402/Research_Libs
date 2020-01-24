@@ -1,10 +1,12 @@
 /*
- * RatioData.cpp
+ * AzimuthBinData.cpp
  *
  *  Created on: Jul 31, 2019
  *      Author: Dylan Neff
  */
 
+
+#include "AzimuthBinData.h"
 
 #include <fstream>
 #include <iostream>
@@ -23,39 +25,38 @@
 #include <TLegend.h>
 #include <TPaveStats.h>
 
-#include "RatioData.h"
 #include "file_io.h"
 
 using namespace std;
 
 // Structors
-RatioData::RatioData() {
+AzimuthBinData::AzimuthBinData() {
 	divs = 0;
 	num_ratios = -1;
 }
 
-RatioData::RatioData(int divisions) {
+AzimuthBinData::AzimuthBinData(int divisions) {
 	divs = divisions;
 	num_ratios = -1;
 }
 
-RatioData::~RatioData() {
+AzimuthBinData::~AzimuthBinData() {
 	// Nothing
 }
 
 
 // Operators
-RatioData& RatioData::operator += (RatioData& obj) {
-	map<int, map<int, int>> new_ratio_data = obj.get_ratio_data();
+AzimuthBinData& AzimuthBinData::operator += (AzimuthBinData& obj) {
+	map<int, map<int, int>> new_ratio_data = obj.get_bin_data();
 
 	for(pair<int, map<int, int>> proton_per_event:new_ratio_data) {
 		for(pair<int, int> proton_per_div:proton_per_event.second) {
-			this->ratio_data[proton_per_event.first][proton_per_div.first] += proton_per_div.second;
+			this->bin_data[proton_per_event.first][proton_per_div.first] += proton_per_div.second;
 		}
 	}
 
-	if(this->ratio_data.size() > 0) {
-		this->ratio_data_gen = true;
+	if(this->bin_data.size() > 0) {
+		this->bin_data_gen = true;
 	}
 
 	return(*this);
@@ -63,14 +64,14 @@ RatioData& RatioData::operator += (RatioData& obj) {
 
 
 // Getters
-map<int, map<int, int>> RatioData::get_ratio_data() {
-	if(!ratio_data_gen) {
+map<int, map<int, int>> AzimuthBinData::get_bin_data() {
+	if(!bin_data_gen) {
 		cout << "No ratio data generated. Returning empty map." << endl;
 	}
-	return ratio_data;
+	return bin_data;
 }
 
-map<int, int> RatioData::get_proton_dist() {
+map<int, int> AzimuthBinData::get_proton_dist() {
 	if(!proton_dist_gen) {
 		gen_proton_dist();
 	}
@@ -78,7 +79,7 @@ map<int, int> RatioData::get_proton_dist() {
 	return proton_dist;
 }
 
-vector<double> RatioData::get_ratio_vec() {
+vector<double> AzimuthBinData::get_ratio_vec() {
 	if(!ratio_vec_gen) {
 		gen_ratio_vec();
 	}
@@ -86,7 +87,7 @@ vector<double> RatioData::get_ratio_vec() {
 	return ratio_vec;
 }
 
-map<double, int> RatioData::get_ratio_hist() {
+map<double, int> AzimuthBinData::get_ratio_hist() {
 	if(!ratio_hist_gen) {
 		gen_ratio_hist();
 	}
@@ -94,8 +95,16 @@ map<double, int> RatioData::get_ratio_hist() {
 	return ratio_hist;
 }
 
+map<double, int> AzimuthBinData::get_diff_hist() {
+	if(!diff_hist_gen) {
+		gen_diff_hist();
+	}
 
-int RatioData::get_num_ratios() {
+	return diff_hist;
+}
+
+
+int AzimuthBinData::get_num_ratios() {
 	if(num_ratios < 0) {
 		num_ratios = 0;
 		if(!ratio_hist_gen) {
@@ -111,18 +120,18 @@ int RatioData::get_num_ratios() {
 
 
 // Setters
-void RatioData::set_ratio_data(map<int, map<int, int>> ratio_data_in) {
-	ratio_data = ratio_data_in;
-	ratio_data_gen = true;
+void AzimuthBinData::set_ratio_data(map<int, map<int, int>> ratio_data_in) {
+	bin_data = ratio_data_in;
+	bin_data_gen = true;
 }
 
-void RatioData::set_divs(int divs_in) {
+void AzimuthBinData::set_divs(int divs_in) {
 	divs = divs_in;
 }
 
 
 // Doers
-void RatioData::read_data_from_file(string file_path) {
+void AzimuthBinData::read_data_from_file(string file_path) {
 	ifstream in_file(file_path);
 	string line;
 	if(in_file.is_open()) {
@@ -132,16 +141,16 @@ void RatioData::read_data_from_file(string file_path) {
 			for(string element:data_elements) {
 				if(element.size() > 1) {
 					vector<string> datum = split_string_by_char(element, data_delimeters[2]);
-					ratio_data[stoi(line_elements[0])][stoi(datum[0])] += stoi(datum[1]);
+					bin_data[stoi(line_elements[0])][stoi(datum[0])] += stoi(datum[1]);
 				}
 			}
 		}
-	ratio_data_gen = true;
+	bin_data_gen = true;
 	}
 }
 
 
-void RatioData::read_ratios_from_dir(string dir_path, int div, int cent) {
+void AzimuthBinData::read_data_from_dir(string dir_path, int div, int cent) {
 	DIR* files_dir = opendir(dir_path.data());
 	struct dirent* dp;
 	while((dp=readdir(files_dir)) != NULL) {
@@ -159,11 +168,11 @@ void RatioData::read_ratios_from_dir(string dir_path, int div, int cent) {
 							for(string element:data_elements) {
 								if(element.size() > 1) {
 									vector<string> datum = split_string_by_char(element, data_delimeters[2]);
-									ratio_data[stoi(line_elements[0])][stoi(datum[0])] += stoi(datum[1]);
+									bin_data[stoi(line_elements[0])][stoi(datum[0])] += stoi(datum[1]);
 								}
 							}
 						}
-						ratio_data_gen = true;
+						bin_data_gen = true;
 					}
 				}
 			}
@@ -172,13 +181,13 @@ void RatioData::read_ratios_from_dir(string dir_path, int div, int cent) {
 }
 
 
-void RatioData::write_ratios(string unique_suffix, string dir_path, int div, int cent) {
+void AzimuthBinData::write_data(string unique_suffix, string dir_path, int div, int cent) {
 	string out_name = dir_path + ratios_file_pre + file_name_delimeter;
 	out_name += ratios_file_fields[0] + file_name_delimeter + to_string(div);
 	out_name += file_name_delimeter + ratios_file_fields[1] + file_name_delimeter + to_string(cent);
 	out_name += file_name_delimeter + unique_suffix + file_ext;
 	ofstream out_file(out_name);
-	for(pair<int, map<int, int>> nprotons:ratio_data) {
+	for(pair<int, map<int, int>> nprotons:bin_data) {
 		out_file << to_string(nprotons.first) << data_delimeters[0];
 		for(pair<int, int> bin_protons:nprotons.second) {
 			out_file << to_string(bin_protons.first) << data_delimeters[2] << to_string(bin_protons.second) << data_delimeters[1];
@@ -188,8 +197,8 @@ void RatioData::write_ratios(string unique_suffix, string dir_path, int div, int
 	out_file.close();
 }
 
-void RatioData::gen_proton_dist() {
-	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
+void AzimuthBinData::gen_proton_dist() {
+	for(pair<int, map<int, int>> proton_per_event:bin_data) {
 		for(pair<int, int> proton_per_div:proton_per_event.second) {
 			proton_dist[proton_per_event.first] += proton_per_div.second;
 		}
@@ -198,8 +207,8 @@ void RatioData::gen_proton_dist() {
 	proton_dist_gen = true;
 }
 
-void RatioData::gen_ratio_vec() {
-	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
+void AzimuthBinData::gen_ratio_vec() {
+	for(pair<int, map<int, int>> proton_per_event:bin_data) {
 		for(pair<int, int> proton_per_div:proton_per_event.second) {
 			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
 			vector<double> ratio_batch(proton_per_div.second, ratio);
@@ -209,8 +218,8 @@ void RatioData::gen_ratio_vec() {
 	ratio_vec_gen = true;
 }
 
-void RatioData::gen_ratio_hist() {
-	for(pair<int, map<int, int>> proton_per_event:ratio_data) {
+void AzimuthBinData::gen_ratio_hist() {
+	for(pair<int, map<int, int>> proton_per_event:bin_data) {
 		for(pair<int, int> proton_per_div:proton_per_event.second) {
 			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
 			ratio_hist[ratio] += proton_per_div.second;
@@ -219,14 +228,24 @@ void RatioData::gen_ratio_hist() {
 	ratio_hist_gen = true;
 }
 
+void AzimuthBinData::gen_diff_hist() {
+	for(pair<int, map<int, int>> proton_per_event:bin_data) {
+		for(pair<int, int> proton_per_div:proton_per_event.second) {
+			double diff = proton_per_div.first - (double)proton_per_event.first / divs;
+			diff_hist[diff] += proton_per_div.second;
+		}
+	}
+	diff_hist_gen = true;
+}
+
 
 // Plotters
-void RatioData::canvas_2d_dist(string name, double p_clust) {
-	if(ratio_data.size() <= 0) { return; }  // Bad workaround, fix.
-	TH2I *hist = ratios_map_to_hist(ratio_data, name);
+void AzimuthBinData::canvas_2d_dist(string name, double p_clust) {
+	if(bin_data.size() <= 0) { return; }  // Bad workaround, fix.
+	TH2I *hist = ratios_map_to_hist(bin_data, name);
 	TCanvas *can = new TCanvas((name+"_Can").data());
-	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--ratio_data.end())->first);
-	TF1 *max_line = new TF1((name+"_max").data(), "x", -0.5, 0.5+(--ratio_data.end())->first);
+	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--bin_data.end())->first);
+	TF1 *max_line = new TF1((name+"_max").data(), "x", -0.5, 0.5+(--bin_data.end())->first);
 	max_line->SetLineColor(4);
 	gStyle->SetOptStat("KSiouRMen");  //221112211
 	can->SetLogz();
@@ -264,9 +283,9 @@ void RatioData::canvas_2d_dist(string name, double p_clust) {
 }
 
 
-void RatioData::canvas_1d_dist(string name) {
+void AzimuthBinData::canvas_ratio_dist(string name) {
 	TH1D *hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.1);
-	for(pair<int, map<int, int>> event:ratio_data) {
+	for(pair<int, map<int, int>> event:bin_data) {
 		for(pair<int, int> bin:event.second) {
 			hist->Fill(((double)bin.first) / event.first, bin.second);
 		}
@@ -285,7 +304,7 @@ void RatioData::canvas_1d_dist(string name) {
 }
 
 
-void RatioData::canvas_proton_dist(string name) {
+void AzimuthBinData::canvas_proton_dist(string name) {
 	if(!proton_dist_gen) { gen_proton_dist(); }
 	TH1D *hist = new TH1D(name.data(), name.data(), 51, -0.5, 50.5);
 	for(pair<int, int> protons:proton_dist) {
