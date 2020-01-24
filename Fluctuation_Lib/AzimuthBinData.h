@@ -29,13 +29,15 @@ public:
 	map<int, int> get_proton_dist();
 	vector<double> get_ratio_vec();
 	map<double, int> get_ratio_hist();
-	map<double, int> get_diff_hist();
+	map<double, int> get_diff_hist(string div_flag = "yes");
 	int get_divs();
-	int get_num_ratios();
+	int get_num_bins();
+	double get_diff_divisor();
 
 	// Setters
 	void set_ratio_data(map<int, map<int, int>> ratio_data_in);
 	void set_divs(int divs_in);
+	void set_diff_divisor(double divisor);
 
 	// Doers
 	void read_data_from_file(string file_path);
@@ -45,6 +47,7 @@ public:
 	// Plotters
 	void canvas_2d_dist(string name, double p_clust = -99);
 	void canvas_ratio_dist(string name);
+	void canvas_diff_dist(string name, string div_flag = "yes");
 	void canvas_proton_dist(string name);
 
 	// Operators
@@ -58,6 +61,7 @@ private:
 	map<double, int> diff_hist;
 	int divs;
 	int num_ratios;
+	double diff_divisor;
 
 	bool bin_data_gen = false;
 	bool proton_dist_gen = false;

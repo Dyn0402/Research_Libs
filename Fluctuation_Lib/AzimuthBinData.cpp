@@ -33,11 +33,13 @@ using namespace std;
 AzimuthBinData::AzimuthBinData() {
 	divs = 0;
 	num_ratios = -1;
+	diff_divisor = 1;
 }
 
 AzimuthBinData::AzimuthBinData(int divisions) {
 	divs = divisions;
 	num_ratios = -1;
+	diff_divisor = 1;
 }
 
 AzimuthBinData::~AzimuthBinData() {
@@ -59,7 +61,7 @@ AzimuthBinData& AzimuthBinData::operator += (AzimuthBinData& obj) {
 		this->bin_data_gen = true;
 	}
 
-	return(*this);
+	return *this;
 }
 
 
@@ -95,16 +97,20 @@ map<double, int> AzimuthBinData::get_ratio_hist() {
 	return ratio_hist;
 }
 
-map<double, int> AzimuthBinData::get_diff_hist() {
-	if(!diff_hist_gen) {
-		gen_diff_hist();
-	}
+map<double, int> AzimuthBinData::get_diff_hist(string div_flag) {
+	if(!diff_hist_gen) { gen_diff_hist(); }
 
-	return diff_hist;
+	if(div_flag == "yes") {
+		map<double, int> div_diff_hist;
+		for(pair<double, int> diff:diff_hist) {
+			div_diff_hist[diff.first/diff_divisor] = diff.second;
+		}
+		return div_diff_hist;
+	} else { return diff_hist; }
 }
 
 
-int AzimuthBinData::get_num_ratios() {
+int AzimuthBinData::get_num_bins() {
 	if(num_ratios < 0) {
 		num_ratios = 0;
 		if(!ratio_hist_gen) {
@@ -118,6 +124,10 @@ int AzimuthBinData::get_num_ratios() {
 	return(num_ratios);
 }
 
+double AzimuthBinData::get_diff_divisor() {
+	return diff_divisor;
+}
+
 
 // Setters
 void AzimuthBinData::set_ratio_data(map<int, map<int, int>> ratio_data_in) {
@@ -127,6 +137,10 @@ void AzimuthBinData::set_ratio_data(map<int, map<int, int>> ratio_data_in) {
 
 void AzimuthBinData::set_divs(int divs_in) {
 	divs = divs_in;
+}
+
+void AzimuthBinData::set_diff_divisor(double divisor) {
+	diff_divisor = divisor;
 }
 
 
@@ -198,20 +212,20 @@ void AzimuthBinData::write_data(string unique_suffix, string dir_path, int div, 
 }
 
 void AzimuthBinData::gen_proton_dist() {
-	for(pair<int, map<int, int>> proton_per_event:bin_data) {
-		for(pair<int, int> proton_per_div:proton_per_event.second) {
-			proton_dist[proton_per_event.first] += proton_per_div.second;
+	for(pair<int, map<int, int>> event:bin_data) {
+		for(pair<int, int> bin:event.second) {
+			proton_dist[event.first] += bin.second;
 		}
-		proton_dist[proton_per_event.first] /= divs;
+		proton_dist[event.first] /= divs;
 	}
 	proton_dist_gen = true;
 }
 
 void AzimuthBinData::gen_ratio_vec() {
-	for(pair<int, map<int, int>> proton_per_event:bin_data) {
-		for(pair<int, int> proton_per_div:proton_per_event.second) {
-			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
-			vector<double> ratio_batch(proton_per_div.second, ratio);
+	for(pair<int, map<int, int>> event:bin_data) {
+		for(pair<int, int> bin:event.second) {
+			double ratio = (double)bin.first / event.first;
+			vector<double> ratio_batch(bin.second, ratio);
 			ratio_vec.insert(ratio_vec.end(), ratio_batch.begin(), ratio_batch.end());
 		}
 	}
@@ -219,20 +233,20 @@ void AzimuthBinData::gen_ratio_vec() {
 }
 
 void AzimuthBinData::gen_ratio_hist() {
-	for(pair<int, map<int, int>> proton_per_event:bin_data) {
-		for(pair<int, int> proton_per_div:proton_per_event.second) {
-			double ratio = ((double)proton_per_div.first)/proton_per_event.first;
-			ratio_hist[ratio] += proton_per_div.second;
+	for(pair<int, map<int, int>> event:bin_data) {
+		for(pair<int, int> bin:event.second) {
+			double ratio = (double)bin.first / event.first;
+			ratio_hist[ratio] += bin.second;
 		}
 	}
 	ratio_hist_gen = true;
 }
 
 void AzimuthBinData::gen_diff_hist() {
-	for(pair<int, map<int, int>> proton_per_event:bin_data) {
-		for(pair<int, int> proton_per_div:proton_per_event.second) {
-			double diff = proton_per_div.first - (double)proton_per_event.first / divs;
-			diff_hist[diff] += proton_per_div.second;
+	for(pair<int, map<int, int>> event:bin_data) {
+		for(pair<int, int> bin:event.second) {
+			double diff = bin.first - (double)event.first / divs;
+			diff_hist[diff] += bin.second;
 		}
 	}
 	diff_hist_gen = true;
@@ -287,7 +301,31 @@ void AzimuthBinData::canvas_ratio_dist(string name) {
 	TH1D *hist = new TH1D(name.data(), name.data(), 23, -0.05, 1.1);
 	for(pair<int, map<int, int>> event:bin_data) {
 		for(pair<int, int> bin:event.second) {
-			hist->Fill(((double)bin.first) / event.first, bin.second);
+			hist->Fill((double)bin.first / event.first, bin.second);
+		}
+	}
+	TCanvas *can = new TCanvas((name+"_Can").data());
+	can->SetLogy();
+	gStyle->SetOptStat("KSiouRMen");  //221112211
+	hist->Draw("HIST");
+	gPad->Update();
+
+	can->Write();
+
+
+	delete hist;
+	delete can;
+}
+
+
+void AzimuthBinData::canvas_diff_dist(string name, string div_flag) {
+	if(!diff_hist_gen) { gen_diff_hist(); }
+	double divisor = 1;
+	if(div_flag == "yes") { divisor = diff_divisor; }
+	TH1D *hist = new TH1D(name.data(), name.data(), 1001, -20, 20);  // Guess at binning/range, fix.
+	for(pair<int, map<int, int>> event:bin_data) {
+		for(pair<int, int> bin:event.second) {
+			hist->Fill((bin.first - (double)event.first / divs) / divisor, bin.second);
 		}
 	}
 	TCanvas *can = new TCanvas((name+"_Can").data());
