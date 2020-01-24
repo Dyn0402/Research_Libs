@@ -163,12 +163,14 @@ bool Stats::get_nan_check() {
 void Stats::set_distribution(vector<double> data) {
 	distribution = data;
 	dist_type = "vec";
+	calc_dist_num();
 }
 
 // Set distribution to passed data map
 void Stats::set_distribution(map<double, int> data) {
 	distribution_hist = data;
 	dist_type = "hist";
+	calc_dist_num();
 }
 
 // Set nan_check indicating whether nan warning is printed
