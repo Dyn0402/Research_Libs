@@ -73,6 +73,15 @@ map<int, map<int, int>> AzimuthBinData::get_bin_data() {
 	return bin_data;
 }
 
+
+map<int, int> AzimuthBinData::get_bin_data_slice(int total_protons) {
+	if(!bin_data_gen) {
+		cout << "No ratio data generated. Returning empty map." << endl;
+	}
+	return bin_data[total_protons];
+}
+
+
 map<int, int> AzimuthBinData::get_proton_dist() {
 	if(!proton_dist_gen) {
 		gen_proton_dist();

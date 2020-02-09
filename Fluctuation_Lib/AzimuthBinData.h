@@ -26,6 +26,7 @@ public:
 
 	// Getters
 	map<int, map<int, int>> get_bin_data();
+	map<int, int> get_bin_data_slice(int total_protons);
 	map<int, int> get_proton_dist();
 	vector<double> get_ratio_vec();
 	map<double, int> get_ratio_hist();
