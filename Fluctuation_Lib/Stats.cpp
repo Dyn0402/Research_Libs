@@ -37,7 +37,7 @@ Stats::Stats(vector<double> data) {
 	nan_check = true;
 }
 
-// Constructor with distribution passed as a histogram.
+// Constructor with distribution passed as a double histogram.
 Stats::Stats(map<double, int> data) {
 	distribution_hist = data;
 	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
@@ -47,6 +47,15 @@ Stats::Stats(map<double, int> data) {
 	nan_check = true;
 }
 
+// Constructor with distribution passed as an int histogram.
+Stats::Stats(map<int, int> data) {
+	for(pair<int, int> datum:data) { distribution_hist[(double)datum.first] = datum.second; }
+	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
+	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	dist_type = "hist";
+	calc_dist_num();
+	nan_check = true;
+}
 
 // Getters
 // Return mean with error as Measure object
@@ -169,6 +178,13 @@ void Stats::set_distribution(vector<double> data) {
 // Set distribution to passed data map
 void Stats::set_distribution(map<double, int> data) {
 	distribution_hist = data;
+	dist_type = "hist";
+	calc_dist_num();
+}
+
+// Set distribution to passed data map
+void Stats::set_distribution(map<int, int> data) {
+	for(pair<int, int> datum:data) { distribution_hist[(double)datum.first] = datum.second; }
 	dist_type = "hist";
 	calc_dist_num();
 }

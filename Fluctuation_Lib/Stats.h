@@ -39,10 +39,12 @@ public:
 	Stats();
 	Stats(vector<double> data);
 	Stats(map<double, int> data);
+	Stats(map<int, int> data);
 
 	// Setters
 	void set_distribution(vector<double> data);
 	void set_distribution(map<double, int> data);
+	void set_distribution(map<int, int> data);
 	void set_nan_check(bool nan_check);
 
 	// Getters
