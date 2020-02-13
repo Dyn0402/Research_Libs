@@ -12,6 +12,7 @@
 #include <sstream>
 #include <map>
 #include <dirent.h>
+#include <sys/stat.h>
 
 #include "file_io.h"
 
@@ -23,7 +24,13 @@ using namespace std;
 
 
 void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path) {
-	write_ratios(job_id, data, path);
+	struct stat info;
+
+	if( stat(path.data(), &info) !=0 ) {
+		cout << "Can't access path: " << path << " Skipping following read/write." << endl;
+	} else {
+		write_ratios(job_id, data, path);
+	}
 }
 
 
@@ -64,19 +71,25 @@ void write_nprotons(string job_id, map<int, map<int, int>> good_protons, string 
 
 map<int, int> read_nprotons(string path, int cent) {
 	map<int, int> nprotons;
-	DIR* files_dir = opendir(path.data());
-	struct dirent* dp;
-	while((dp=readdir(files_dir)) != NULL) {
-		string file = dp->d_name;
-		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
-		if(fields[0] == io::nproton_file_pre) {
-			if(stoi(fields[2]) == cent) {
-				ifstream in_file(path+file);
-				string line;
-				if(in_file.is_open()) {
-					while(getline(in_file,line)) {
-						vector<string> elements = split_string_by_char(line, io::data_delimeters[0]);
-						nprotons[stoi(elements[0])] += stoi(elements[1]);
+	struct stat info;
+
+	if( stat(path.data(), &info) !=0 ) {
+	cout << "Can't access path: " << path << " Skipping following read/write." << endl;
+	} else {
+		DIR* files_dir = opendir(path.data());
+		struct dirent* dp;
+		while((dp=readdir(files_dir)) != NULL) {
+			string file = dp->d_name;
+			vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
+			if(fields[0] == io::nproton_file_pre) {
+				if(stoi(fields[2]) == cent) {
+					ifstream in_file(path+file);
+					string line;
+					if(in_file.is_open()) {
+						while(getline(in_file,line)) {
+							vector<string> elements = split_string_by_char(line, io::data_delimeters[0]);
+							nprotons[stoi(elements[0])] += stoi(elements[1]);
+						}
 					}
 				}
 			}
@@ -89,24 +102,30 @@ map<int, int> read_nprotons(string path, int cent) {
 
 map<int, map<int, int>> read_ratios(string path, int div, int cent) {
 	map<int, map<int, int>> ratios;
-	DIR* files_dir = opendir(path.data());
-	struct dirent* dp;
-	while((dp=readdir(files_dir)) != NULL) {
-		string file = dp->d_name;
-		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
-		if(fields[0] == io::ratios_file_pre) {
-			if(stoi(fields[2]) == div) {
-				if(stoi(fields[4]) == cent) {
-					ifstream in_file(path+file);
-					string line;
-					if(in_file.is_open()) {
-						while(getline(in_file,line)) {
-							vector<string> line_elements = split_string_by_char(line, io::data_delimeters[0]);
-							vector<string> data_elements = split_string_by_char(line_elements[1], io::data_delimeters[1]);
-							for(string element:data_elements) {
-								if(element.size() > 1) {
-									vector<string> datum = split_string_by_char(element, io::data_delimeters[2]);
-									ratios[stoi(line_elements[0])][stoi(datum[0])] += stoi(datum[1]);
+	struct stat info;
+
+	if( stat(path.data(), &info) !=0 ) {
+		cout << "Can't access path: " << path << " Skipping following read/write." << endl;
+	} else {
+		DIR* files_dir = opendir(path.data());
+		struct dirent* dp;
+		while((dp=readdir(files_dir)) != NULL) {
+			string file = dp->d_name;
+			vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
+			if(fields[0] == io::ratios_file_pre) {
+				if(stoi(fields[2]) == div) {
+					if(stoi(fields[4]) == cent) {
+						ifstream in_file(path+file);
+						string line;
+						if(in_file.is_open()) {
+							while(getline(in_file,line)) {
+								vector<string> line_elements = split_string_by_char(line, io::data_delimeters[0]);
+								vector<string> data_elements = split_string_by_char(line_elements[1], io::data_delimeters[1]);
+								for(string element:data_elements) {
+									if(element.size() > 1) {
+										vector<string> datum = split_string_by_char(element, io::data_delimeters[2]);
+										ratios[stoi(line_elements[0])][stoi(datum[0])] += stoi(datum[1]);
+									}
 								}
 							}
 						}
@@ -134,18 +153,24 @@ vector<string> split_string_by_char(string str, char del) {
 //Return name (not path) of all files in dir_path with extension ext.
 vector<string> get_files_in_dir(string dir_path, string ext, string out) {
 	vector<string> files;
-	DIR* files_dir = opendir(dir_path.data());
-	struct dirent* dp;
-	while((dp=readdir(files_dir)) != NULL) {
-		string file = dp->d_name;
-		vector<string> fields = split_string_by_char(file, '.');
-		if(fields.back() == ext) {
-			files.push_back(file);
+	struct stat info;
+
+	if( stat(dir_path.data(), &info) !=0 ) {
+		cout << "Can't access path: " << dir_path << " Skipping following read/write." << endl;
+	} else {
+		DIR* files_dir = opendir(dir_path.data());
+		struct dirent* dp;
+		while((dp=readdir(files_dir)) != NULL) {
+			string file = dp->d_name;
+			vector<string> fields = split_string_by_char(file, '.');
+			if(fields.back() == ext) {
+				files.push_back(file);
+			}
 		}
-	}
-	if(out == "path") {
-		for(unsigned i=0; i<files.size(); i++) {
-			files[i] = dir_path + files[i];
+		if(out == "path") {
+			for(unsigned i=0; i<files.size(); i++) {
+				files[i] = dir_path + files[i];
+			}
 		}
 	}
 
@@ -156,21 +181,27 @@ vector<string> get_files_in_dir(string dir_path, string ext, string out) {
 // Return list of all centralities of specific div that exist in dir_path
 vector<int> get_centrals(string dir_path, int div) {
 	vector<int> centrals;
-	DIR* files_dir = opendir(dir_path.data());
-	struct dirent* dp;
-	while((dp=readdir(files_dir)) != NULL) {
-		string file = dp->d_name;
-		vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
-		if(fields[0] == io::ratios_file_pre) {
-			if(stoi(fields[2]) == div) {
-				int cent = stoi(fields[4]);
-				if(count(centrals.begin(), centrals.end(), cent) == 0) {
-					centrals.push_back(cent);
+	struct stat info;
+
+	if( stat(dir_path.data(), &info) !=0 ) {
+		cout << "Can't access path: " << dir_path << " Skipping following read/write." << endl;
+	} else {
+		DIR* files_dir = opendir(dir_path.data());
+		struct dirent* dp;
+		while((dp=readdir(files_dir)) != NULL) {
+			string file = dp->d_name;
+			vector<string> fields = split_string_by_char(file, io::file_name_delimeter);
+			if(fields[0] == io::ratios_file_pre) {
+				if(stoi(fields[2]) == div) {
+					int cent = stoi(fields[4]);
+					if(count(centrals.begin(), centrals.end(), cent) == 0) {
+						centrals.push_back(cent);
+					}
 				}
 			}
 		}
+		sort(centrals.begin(), centrals.end());
 	}
-	sort(centrals.begin(), centrals.end());
 
 	return(centrals);
 }
