@@ -205,3 +205,10 @@ vector<int> get_centrals(string dir_path, int div) {
 
 	return(centrals);
 }
+
+
+// Get file name from path string
+string get_name_from_path(string path) {
+	string file_name = split_string_by_char(path, '/').back();
+	return(file_name);
+}
