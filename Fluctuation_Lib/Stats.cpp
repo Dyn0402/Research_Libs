@@ -232,7 +232,9 @@ void Stats::calc_standard_deviation(bool err) {
 	}
 	if(err && !standard_deviation_calc.err) {
 		calc_central_moment(4);
-		standard_deviation.err = pow((central_moment[4] / pow(standard_deviation.val, 4) - 1) / (4 * dist_num), 0.5);
+//		standard_deviation.err = pow((central_moment[4] / pow(standard_deviation.val, 4) - 1) / (4 * dist_num), 0.5);
+		double m4 = central_moment[4] / pow(central_moment[2], 2);
+		standard_deviation.err = pow((m4 - 1) * central_moment[2] / (4 * dist_num), 0.5);
 		standard_deviation_calc.err = true;
 	}
 }
