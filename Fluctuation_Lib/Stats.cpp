@@ -63,7 +63,7 @@ Measure Stats::get_mean() {
 	calc_mean(true);
 	Measure mean_out(mean.val, mean.err);
 	if(nan_check) {
-		if(isnan(mean_out.get_val()) || isnan(mean_out.get_err())) {
+		if(std::isnan(mean_out.get_val()) || std::isnan(mean_out.get_err())) {
 			cout << "WARNING: Nan in mean value or error" << endl;
 		}
 	}
@@ -75,7 +75,7 @@ Measure Stats::get_standard_deviation() {
 	calc_standard_deviation(true);
 	Measure standard_deviation_out(standard_deviation.val, standard_deviation.err);
 	if(nan_check) {
-		if(isnan(standard_deviation_out.get_val()) || isnan(standard_deviation_out.get_err())) {
+		if(std::isnan(standard_deviation_out.get_val()) || std::isnan(standard_deviation_out.get_err())) {
 			cout << "WARNING: Nan in standard deviation value or error" << endl;
 		}
 	}
@@ -87,7 +87,7 @@ Measure Stats::get_skewness() {
 	calc_skewness(true);
 	Measure skewness_out(skewness.val, skewness.err);
 	if(nan_check) {
-		if(isnan(skewness_out.get_val()) || isnan(skewness_out.get_err())) {
+		if(std::isnan(skewness_out.get_val()) || std::isnan(skewness_out.get_err())) {
 			cout << "WARNING: Nan in skewness value or error" << endl;
 		}
 	}
@@ -99,7 +99,7 @@ Measure Stats::get_kurtosis() {
 	calc_kurtosis(true);
 	Measure kurtosis_out(kurtosis.val, kurtosis.err);
 	if(nan_check) {
-		if(isnan(kurtosis_out.get_val()) || isnan(kurtosis_out.get_err())) {
+		if(std::isnan(kurtosis_out.get_val()) || std::isnan(kurtosis_out.get_err())) {
 			cout << "WARNING: Nan in kurtosis value or error" << endl;
 		}
 	}
@@ -113,7 +113,7 @@ Measure Stats::get_non_excess_kurtosis() {
 	Measure kurtosis_out(kurtosis.val, kurtosis.err);
 	kurtosis_out = kurtosis_out + 3;
 	if(nan_check) {
-		if(isnan(kurtosis_out.get_val()) || isnan(kurtosis_out.get_err())) {
+		if(std::isnan(kurtosis_out.get_val()) || std::isnan(kurtosis_out.get_err())) {
 			cout << "WARNING: Nan in kurtosis value or error" << endl;
 		}
 	}
@@ -125,7 +125,7 @@ Measure Stats::get_cumulant(int order) {
 	calc_cumulant(order);
 	Measure cumulant_out(cumulant[order].val, cumulant[order].err);
 	if(nan_check) {
-		if(isnan(cumulant_out.get_val()) || isnan(cumulant_out.get_err())) {
+		if(std::isnan(cumulant_out.get_val()) || std::isnan(cumulant_out.get_err())) {
 			cout << "WARNING: Nan in cumulant order " << order << " value or error" << endl;
 		}
 	}
@@ -137,7 +137,7 @@ Measure Stats::get_central_moment(int order) {
 	calc_central_moment(order);
 	Measure moment_out(central_moment[order], 0.0); // No error, need to add later.
 	if(nan_check) {
-		if(isnan(moment_out.get_val()) || isnan(moment_out.get_err())) {
+		if(std::isnan(moment_out.get_val()) || std::isnan(moment_out.get_err())) {
 			cout << "WARNING: Nan in cumulant order " << order << " value or error" << endl;
 		}
 	}
@@ -149,7 +149,7 @@ Measure Stats::get_raw_moment(int order) {
 	calc_raw_moment(order);
 	Measure moment_out(raw_moment[order], 0.0); // No error, need to add later.
 	if(nan_check) {
-		if(isnan(moment_out.get_val()) || isnan(moment_out.get_err())) {
+		if(std::isnan(moment_out.get_val()) || std::isnan(moment_out.get_err())) {
 			cout << "WARNING: Nan in cumulant order " << order << " value or error" << endl;
 		}
 	}
