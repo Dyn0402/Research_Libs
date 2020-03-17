@@ -21,9 +21,9 @@ struct tree_data {
 	map<int, map<int, int>> good_protons; //good_protons[centrality][num protons]
 };
 
-vector<int> get_Rs(vector<double> angles, int divisions);
+vector<int> get_Rs(const vector<double>& angles, int divisions);
 double rotate_angle(double angle, double rotate);
-vector<double> rotate_angles(vector<double> angles, double rotate);
+vector<double> rotate_angles(const vector<double>& angles, double rotate);
 
 tuple<double, double> get_cumulant(vector<double> data, int n);
 double get_central_moment(vector<double> data, int n);

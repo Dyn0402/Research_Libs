@@ -19,7 +19,7 @@
 using namespace std;
 
 
-vector<int> get_Rs(vector<double> angles, int divisions) {
+vector<int> get_Rs(const vector<double>& angles, int divisions) {
 	vector<int> Rs(divisions, 0);
 	int bin;
 
@@ -48,7 +48,7 @@ double rotate_angle(double angle, double rotate) {
 
 
 //Rotate angles by rotate. Generalization of rotate_angle.
-vector<double> rotate_angles(vector<double> angles, double rotate) {
+vector<double> rotate_angles(const vector<double>& angles, double rotate) {
 	vector<double> rotated_angles;
 	for(double angle:angles) {
 		rotated_angles.push_back(rotate_angle(angle, rotate));
