@@ -26,7 +26,7 @@ vector<int> get_Rs(const vector<double>& angles, int divisions) {
 	if(angles.size() > 0) {
 		for(double angle:angles) {
 			if(angle >= 2*M_PI || angle < 0) {
-				cout << "Angle " << angle << " out of range. Rotating into range [0,2*pi)." << endl;
+//				cout << "Angle " << angle << " out of range. Rotating into range [0,2*pi)." << endl;
 				angle = rotate_angle(angle, 0);
 			}
 			bin = angle / (2 * M_PI) * divisions;
