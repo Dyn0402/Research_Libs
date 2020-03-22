@@ -178,6 +178,50 @@ vector<string> get_files_in_dir(string dir_path, string ext, string out) {
 }
 
 
+// Check if sub is in main.
+bool in_string(string main, string sub) {
+	if (main.find(sub) != string::npos) {
+		return(true);
+	}
+	return(false);
+}
+
+
+// Check if any subs are in main. If all is true, check if all subs are in main.
+bool in_string(string main, vector<string> subs, bool all) {
+
+	for(string sub:subs) {
+		if(in_string(main, sub)) {
+			if(!all) {
+				return(true);
+			}
+		} else if(all) {
+			return(false);
+		}
+	}
+
+	if(all) {
+		return(true);
+	} else {
+		return(false);
+	}
+}
+
+
+// Emulation of Python split function. Split string into vector of strings on delim.
+vector<string> split(string main, char delim) {
+	vector<string> split_strings {""};
+	for (char x:main) {
+		if(x == delim) {
+			split_strings.push_back("");
+		} else {
+			split_strings.back() += x;
+		}
+	}
+	return(split_strings);
+}
+
+
 // Return list of all centralities of specific div that exist in dir_path
 vector<int> get_centrals(string dir_path, int div) {
 	vector<int> centrals;
