@@ -353,7 +353,7 @@ void AzimuthBinData::canvas_diff_dist(string name, string div_flag) {
 
 void AzimuthBinData::canvas_proton_dist(string name) {
 	if(!proton_dist_gen) { gen_proton_dist(); }
-	TH1D *hist = new TH1D(name.data(), name.data(), 51, -0.5, 50.5);
+	TH1D *hist = new TH1D(name.data(), name.data(), 66, -0.5, 65.5);
 	for(pair<int, int> protons:proton_dist) {
 		hist->Fill(protons.first, protons.second);
 	}
