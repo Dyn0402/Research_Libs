@@ -213,7 +213,9 @@ vector<string> split(string main, char delim) {
 	vector<string> split_strings {""};
 	for (char x:main) {
 		if(x == delim) {
-			split_strings.push_back("");
+			if(split_strings.back() != "") {
+				split_strings.push_back("");
+			}
 		} else {
 			split_strings.back() += x;
 		}
