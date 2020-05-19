@@ -28,9 +28,12 @@ public:
 	map<int, map<int, int>> get_bin_data();
 	map<int, int> get_bin_data_slice(int total_protons);
 	map<int, int> get_proton_dist();
+	double get_proton_dist_mean();
 	vector<double> get_ratio_vec();
 	map<double, int> get_ratio_hist();
 	map<double, int> get_diff_hist(string div_flag = "yes");
+	map<int, map<double, int>> get_diff_slice_hist(string div_flag = "yes");
+	map<double, int> get_diff_slice_proj(string div_flag = "yes");
 	int get_divs();
 	int get_num_bins();
 	double get_diff_divisor();
@@ -39,6 +42,7 @@ public:
 	void set_ratio_data(map<int, map<int, int>> ratio_data_in);
 	void set_divs(int divs_in);
 	void set_diff_divisor(double divisor);
+	void set_diff_slice_divisor(int total_particles, double divisor);
 
 	// Doers
 	void read_data_from_file(string file_path);
@@ -60,15 +64,18 @@ private:
 	vector<double> ratio_vec;
 	map<double, int> ratio_hist;
 	map<double, int> diff_hist;
+	map<int, map<double, int>> diff_slice_hist;
 	int divs;
 	int num_ratios;
 	double diff_divisor;
+	map<int, double> diff_slice_divisor;
 
 	bool bin_data_gen = false;
 	bool proton_dist_gen = false;
 	bool ratio_vec_gen = false;
 	bool ratio_hist_gen = false;
 	bool diff_hist_gen = false;
+	bool diff_slice_hist_gen = false;
 
 	string nproton_file_pre = "nprotons";
 	vector<string> nproton_file_fields = {"centrality"};
@@ -83,6 +90,7 @@ private:
 	void gen_ratio_vec();
 	void gen_ratio_hist();
 	void gen_diff_hist();
+	void gen_diff_slice_hist();
 };
 
 
