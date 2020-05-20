@@ -209,7 +209,7 @@ void sum_tree_data(tree_data *base, tree_data add) {
 }
 
 
-vector<double> get_two_particle_correlation(vector<double> angles) {
+vector<double> get_two_particle_correlation(vector<double> &angles) {
 	vector<double> corrs;
 	int num_angles = (int) angles.size();
 	for(int i=0; i<num_angles-1; i++) {

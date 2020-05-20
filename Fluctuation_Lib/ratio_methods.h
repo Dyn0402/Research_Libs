@@ -34,6 +34,6 @@ vector<double> ratios_map_to_vec(map<int, map<int, int>> ratios);
 TH2I* ratios_map_to_hist(map<int, map<int, int>> ratios, string name);
 void sum_tree_data(tree_data *base, tree_data add);
 
-vector<double> get_two_particle_correlation(vector<double> angles);
+vector<double> get_two_particle_correlation(vector<double> &angles);
 
 #endif /* RATIO_METHODS_H_ */
