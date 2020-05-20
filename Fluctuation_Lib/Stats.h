@@ -53,6 +53,7 @@ public:
 	Measure get_mean();
 	Measure get_kurtosis();
 	Measure get_non_excess_kurtosis();
+	Measure get_kurt_var();
 	Measure get_cumulant(int order);
 	Measure get_raw_moment(int order);
 	Measure get_central_moment(int order);
@@ -65,6 +66,7 @@ private:
 	void calc_standard_deviation(bool err = true);
 	void calc_skewness(bool err = true);
 	void calc_kurtosis(bool err = true);
+	void calc_kurt_var(bool err = true);
 	void calc_cumulant(int n, bool err = true);
 	void calc_central_moment(int n);
 	void calc_central_moment(vector<int> ns);
@@ -80,12 +82,12 @@ private:
 
 	string dist_type; // "vec" for vector<double>, "hist" for map<double, int>
 
-	measure<double> mean, standard_deviation, skewness, kurtosis;
+	measure<double> mean, standard_deviation, skewness, kurtosis, kurt_var;
 	map<int, measure<double>> cumulant;
 	map<int, double> central_moment;
 	map<int, double> raw_moment;
 
-	measure<bool> mean_calc, standard_deviation_calc, skewness_calc, kurtosis_calc;
+	measure<bool> mean_calc, standard_deviation_calc, skewness_calc, kurtosis_calc, kurt_var_calc;
 	map<int, measure<bool>> cumulant_calc;
 	map<int, bool> central_moment_calc;
 	map<int, bool> raw_moment_calc;

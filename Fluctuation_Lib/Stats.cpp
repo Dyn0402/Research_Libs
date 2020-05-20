@@ -120,6 +120,19 @@ Measure Stats::get_non_excess_kurtosis() {
 	return(kurtosis_out);
 }
 
+// Return excess kurtosis with error as Measure object
+Measure Stats::get_kurt_var() {
+	calc_kurt_var(true);
+	Measure kurt_var_out(kurtosis.val, kurtosis.err);
+	if(nan_check) {
+		if(std::isnan(kurt_var_out.get_val()) || std::isnan(kurt_var_out.get_err())) {
+			cout << "WARNING: Nan in kurtosis value or error" << endl;
+		}
+	}
+	return(kurt_var_out);
+}
+
+
 // Return cumulant of order n with error as Measure object
 Measure Stats::get_cumulant(int order) {
 	calc_cumulant(order);
@@ -250,6 +263,7 @@ void Stats::calc_skewness(bool err) {
 	}
 	if(err && !skewness_calc.err) {
 		calc_central_moment({4,5,6});
+		if(!standard_deviation_calc.val) { calc_standard_deviation(false); }
 		double m3 = central_moment[3] / pow(standard_deviation.val, 3);
 		double m4 = central_moment[4] / pow(standard_deviation.val, 4);
 		double m5 = central_moment[5] / pow(standard_deviation.val, 5);
@@ -270,6 +284,7 @@ void Stats::calc_kurtosis(bool err) {
 	}
 	if(err && !kurtosis_calc.err) {
 		calc_central_moment({3,5,6,8});
+		if(!standard_deviation_calc.val) { calc_standard_deviation(false); }
 		double m3 = central_moment[3] / pow(standard_deviation.val, 3);
 		double m4 = central_moment[4] / pow(standard_deviation.val, 4);
 		double m5 = central_moment[5] / pow(standard_deviation.val, 5);
@@ -277,6 +292,22 @@ void Stats::calc_kurtosis(bool err) {
 		double m8 = central_moment[8] / pow(standard_deviation.val, 8);
 		kurtosis.err = pow((-pow(m4, 2) + 4*pow(m4, 3) + 16*pow(m3, 2) * (1 + m4) - 8*m3*m5 - 4*m4*m6 + m8) / dist_num, 0.5);
 		kurtosis_calc.err = true;
+	}
+}
+
+
+// Calculate the kurtosis*variance of the distribution if not already calculated.
+// Calculate corresponding uncertainty if err and not already calculated.
+void Stats::calc_kurt_var(bool err) {
+	if(!kurt_var_calc.val) {
+		calc_central_moment({2,4});
+		kurt_var.val = central_moment[4] / central_moment[2] - 3 * central_moment[2];
+		kurt_var_calc.val = true;
+	}
+	if(err && !kurt_var_calc.err) {
+		if(!standard_deviation_calc.val) { calc_standard_deviation(false); }
+		kurt_var.err = pow(24 * pow(standard_deviation.val, 4) / dist_num, 0.5);
+		kurt_var_calc.err = true;
 	}
 }
 
