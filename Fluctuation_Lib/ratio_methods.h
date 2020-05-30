@@ -12,6 +12,8 @@
 #include <tuple>
 #include <vector>
 
+#include "Measure.h"
+
 #include <TH2.h>
 
 using namespace std;
@@ -35,5 +37,9 @@ TH2I* ratios_map_to_hist(map<int, map<int, int>> ratios, string name);
 void sum_tree_data(tree_data *base, tree_data add);
 
 vector<double> get_two_particle_correlation(vector<double> &angles);
+
+double sample_sd(vector<double> data);
+double sample_sd(vector<Measure> data);
+Measure median(vector<Measure> data);
 
 #endif /* RATIO_METHODS_H_ */

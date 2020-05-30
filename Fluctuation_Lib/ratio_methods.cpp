@@ -223,3 +223,33 @@ vector<double> get_two_particle_correlation(vector<double> &angles) {
 
 	return(corrs);
 }
+
+
+double sample_sd(vector<double> data) {
+	double mean = 0.0, sd = 0.0;
+	for(double element:data) { mean += element; }
+	mean /= (int)data.size();
+	for(double element:data) { sd += pow(element - mean, 2); }
+	sd = pow(sd / ((int)data.size() - 1), 0.5);
+
+	return(sd);
+}
+
+
+double sample_sd(vector<Measure> data) {
+	vector<double> val_vec;
+	for(Measure element:data) {
+		val_vec.push_back(element.get_val());
+	}
+
+	double sd = sample_sd(val_vec);
+
+	return(sd);
+}
+
+
+// Get median Measure of vector by value. If even number of Measures takes lower of two median options.
+Measure median(vector<Measure> data) {
+	sort(data.begin(), data.end(), [] (Measure a, Measure b) { return(a.get_val() < b.get_val()); } );
+	return(data[(int)(data.size()-1) / 2]);
+}

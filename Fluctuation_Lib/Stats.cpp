@@ -20,8 +20,8 @@ using namespace std;
 // Structors
 // Default constructor
 Stats::Stats() {
-	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
-	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	mean = standard_deviation = skewness = skew_sd = kurtosis = kurt_var = {0.0, 0.0};
+	mean_calc = standard_deviation_calc = skewness_calc = skew_sd_calc = kurtosis_calc = kurt_var_calc = {false, false};
 	dist_type = "vec";
 	dist_num = 0;
 	nan_check = true;
@@ -30,8 +30,8 @@ Stats::Stats() {
 // Constructor with distribution passed.
 Stats::Stats(vector<double> data) {
 	distribution = data;
-	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
-	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	mean = standard_deviation = skewness = skew_sd = kurtosis = kurt_var = {0.0, 0.0};
+	mean_calc = standard_deviation_calc = skewness_calc = skew_sd_calc = kurtosis_calc = kurt_var_calc = {false, false};
 	dist_type = "vec";
 	calc_dist_num();
 	nan_check = true;
@@ -40,8 +40,8 @@ Stats::Stats(vector<double> data) {
 // Constructor with distribution passed as a double histogram.
 Stats::Stats(map<double, int> data) {
 	distribution_hist = data;
-	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
-	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	mean = standard_deviation = skewness = skew_sd = kurtosis = kurt_var = {0.0, 0.0};
+	mean_calc = standard_deviation_calc = skewness_calc = skew_sd_calc = kurtosis_calc = kurt_var_calc = {false, false};
 	dist_type = "hist";
 	calc_dist_num();
 	nan_check = true;
@@ -50,8 +50,8 @@ Stats::Stats(map<double, int> data) {
 // Constructor with distribution passed as an int histogram.
 Stats::Stats(map<int, int> data) {
 	for(pair<int, int> datum:data) { distribution_hist[(double)datum.first] = datum.second; }
-	mean = 	standard_deviation = skewness = kurtosis = {0.0, 0.0};
-	mean_calc = standard_deviation_calc = skewness_calc = kurtosis_calc = {false, false};
+	mean = standard_deviation = skewness = skew_sd = kurtosis = kurt_var = {0.0, 0.0};
+	mean_calc = standard_deviation_calc = skewness_calc = skew_sd_calc = kurtosis_calc = kurt_var_calc = {false, false};
 	dist_type = "hist";
 	calc_dist_num();
 	nan_check = true;
@@ -92,6 +92,18 @@ Measure Stats::get_skewness() {
 		}
 	}
 	return(skewness_out);
+}
+
+// Return skewness*sd with error as Measure object
+Measure Stats::get_skew_sd() {
+	calc_skew_sd(true);
+	Measure skew_sd_out(skew_sd.val, skew_sd.err);
+	if(nan_check) {
+		if(std::isnan(skew_sd_out.get_val()) || std::isnan(skew_sd_out.get_err())) {
+			cout << "WARNING: Nan in skewness value or error" << endl;
+		}
+	}
+	return(skew_sd_out);
 }
 
 // Return excess kurtosis with error as Measure object
@@ -274,6 +286,27 @@ void Stats::calc_skewness(bool err) {
 }
 
 
+// Calculate the skewness*standard deviation of the distribution if not already calculated.
+// Calculate corresponding uncertainty if err and not already calculated.
+void Stats::calc_skew_sd(bool err) {
+	if(!skew_sd_calc.val) {
+		calc_central_moment({2,3});
+		skew_sd.val = central_moment[3] / central_moment[2];
+		skew_sd_calc.val = true;
+	}
+	if(err && !skew_sd_calc.err) {
+		calc_central_moment({2,3,4,5,6});
+		if(!standard_deviation_calc.val) { calc_standard_deviation(false); }
+		double m3 = central_moment[3] / pow(standard_deviation.val, 3);
+		double m4 = central_moment[4] / pow(standard_deviation.val, 4);
+		double m5 = central_moment[5] / pow(standard_deviation.val, 5);
+		double m6 = central_moment[6] / pow(standard_deviation.val, 6);
+		skew_sd.err = pow((9 - 6*m4 + pow(m3,2) * (6 + m4) - 2*m3*m5 + m6) * central_moment[2] / dist_num, 0.5);
+		skew_sd_calc.err = true;
+	}
+}
+
+
 // Calculate the kurtosis of the distribution if not already calculated.
 // Calculate corresponding uncertainty if err and not already calculated.
 void Stats::calc_kurtosis(bool err) {
@@ -283,7 +316,7 @@ void Stats::calc_kurtosis(bool err) {
 		kurtosis_calc.val = true;
 	}
 	if(err && !kurtosis_calc.err) {
-		calc_central_moment({3,5,6,8});
+		calc_central_moment({3,4,5,6,8});
 		if(!standard_deviation_calc.val) { calc_standard_deviation(false); }
 		double m3 = central_moment[3] / pow(standard_deviation.val, 3);
 		double m4 = central_moment[4] / pow(standard_deviation.val, 4);
@@ -305,8 +338,14 @@ void Stats::calc_kurt_var(bool err) {
 		kurt_var_calc.val = true;
 	}
 	if(err && !kurt_var_calc.err) {
+		calc_central_moment({2,3,4,5,6,8});
 		if(!standard_deviation_calc.val) { calc_standard_deviation(false); }
-		kurt_var.err = pow(24 * pow(standard_deviation.val, 4) / dist_num, 0.5);
+		double m3 = central_moment[3] / pow(standard_deviation.val, 3);
+		double m4 = central_moment[4] / pow(standard_deviation.val, 4);
+		double m5 = central_moment[5] / pow(standard_deviation.val, 5);
+		double m6 = central_moment[6] / pow(standard_deviation.val, 6);
+		double m8 = central_moment[8] / pow(standard_deviation.val, 8);
+		kurt_var.err = pow((-9 + 6*pow(m4,2) + pow(m4, 3) + 8*pow(m3,2)*(5+m4) - 8*m3*m5 + m4*(9-2*m6) - 6*m6 + m8) * pow(central_moment[2], 2) / dist_num, 0.5);
 		kurt_var_calc.err = true;
 	}
 }
