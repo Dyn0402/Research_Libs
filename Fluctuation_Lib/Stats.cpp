@@ -135,7 +135,7 @@ Measure Stats::get_non_excess_kurtosis() {
 // Return excess kurtosis with error as Measure object
 Measure Stats::get_kurt_var() {
 	calc_kurt_var(true);
-	Measure kurt_var_out(kurtosis.val, kurtosis.err);
+	Measure kurt_var_out(kurt_var.val, kurt_var.err);
 	if(nan_check) {
 		if(std::isnan(kurt_var_out.get_val()) || std::isnan(kurt_var_out.get_err())) {
 			cout << "WARNING: Nan in kurtosis value or error" << endl;
