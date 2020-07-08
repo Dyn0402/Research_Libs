@@ -12,8 +12,6 @@
 #include <math.h>
 #include <cmath>
 
-#include "TH2.h"
-
 #include "ratio_methods.h"
 
 using namespace std;
@@ -23,7 +21,7 @@ vector<int> get_Rs(const vector<double>& angles, int divisions) {
 	vector<int> Rs(divisions, 0);
 	int bin;
 
-	if(angles.size() > 0) {
+//	if(angles.size() > 0) {
 		for(double angle:angles) {
 			if(angle >= 2*M_PI || angle < 0) {
 //				cout << "Angle " << angle << " out of range. Rotating into range [0,2*pi)." << endl;
@@ -31,6 +29,39 @@ vector<int> get_Rs(const vector<double>& angles, int divisions) {
 			}
 			bin = angle / (2 * M_PI) * divisions;
 			Rs[bin]++;
+		}
+//	}
+
+	return(Rs);
+}
+
+
+// Take set of angles and divide 2pi azimuth into bin_num bins of size bin_width with random spacing between bins.
+// Count number of angles within each bin and return this histogram. First bin always starts at 0 so angles should be rotated beforehand.
+vector<int> get_Rs(const vector<double>& angles, double bin_width, TRandom3 *r, int bin_num) {
+	if(bin_num > 2*M_PI / bin_width) { bin_num = (int) 2*M_PI / bin_width; }  // If greater than max possible bins, set to max bins.
+	vector<int> Rs(bin_num, 0);
+
+	vector<pair<double, double>> bins(bin_num, {0, 0});
+	bins[0] = {0, bin_width};
+	for(int bin = 1; bin<bin_num; bin++) {
+		double range = 2*M_PI - bin_width * (bin_num - bin) - bins[bin-1].second;
+		double low = r->Rndm() * range + bins[bin-1].second;
+		bins[bin] = {low, low+bin_width};
+	}
+
+	for(double angle:angles) {
+		if(angle >= 2*M_PI || angle < 0) {
+			angle = rotate_angle(angle, 0);
+		}
+		int bin_index = 0;
+		for(pair<double, double> &bin:bins) {
+			if(angle >= bin.first && angle < bin.second) {
+				Rs[bin_index]++;
+				break;
+			}
+			if(angle < bin.first) { break; }
+			bin_index++;
 		}
 	}
 

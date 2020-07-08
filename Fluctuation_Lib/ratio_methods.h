@@ -15,6 +15,7 @@
 #include "Measure.h"
 
 #include <TH2.h>
+#include <TRandom3.h>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ struct tree_data {
 };
 
 vector<int> get_Rs(const vector<double>& angles, int divisions);
+vector<int> get_Rs(const vector<double>& angles, double bin_width, TRandom3 *r, int bin_num = 1);
 double rotate_angle(double angle, double rotate);
 vector<double> rotate_angles(const vector<double>& angles, double rotate);
 
