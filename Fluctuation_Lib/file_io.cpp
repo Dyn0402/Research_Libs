@@ -23,6 +23,16 @@ using namespace std;
 
 
 
+bool check_path(string path) {
+	struct stat info;
+
+	if( stat(path.data(), &info) !=0 ) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path) {
 	struct stat info;
 
@@ -211,7 +221,7 @@ bool in_string(string main, vector<string> subs, bool all) {
 // Emulation of Python split function. Split string into vector of strings on delim.
 vector<string> split(string main, char delim) {
 	vector<string> split_strings {""};
-	for (char x:main) {
+	for(char x:main) {
 		if(x == delim) {
 			if(split_strings.back() != "") {
 				split_strings.push_back("");
@@ -222,6 +232,33 @@ vector<string> split(string main, char delim) {
 	}
 	return(split_strings);
 }
+
+
+// Emulation of Python split function. Split string into vector of strings on delim.
+//vector<string> split(string main, string delim) {
+//	if(delim.size() <= 0) { return main; }
+//
+//	vector<string> split_strings {""};
+//	int main_index = 0;
+//	while(main_index < (int)main.size()) {
+//		int sub_index = 0;
+//		string temp = "";
+//		while(main[main_index] == delim[sub_index]) {
+//			//
+//		}
+//		split_strings.back().insert(split_strings.back().begin(), temp.begin(), temp.end());
+//	}
+//	for (char x:main) {
+//		if(x == delim[0]) {
+//			if(split_strings.back() != "") {
+//				split_strings.push_back("");
+//			}
+//		} else {
+//			split_strings.back() += x;
+//		}
+//	}
+//	return(split_strings);
+//}
 
 
 // Return list of all centralities of specific div that exist in dir_path

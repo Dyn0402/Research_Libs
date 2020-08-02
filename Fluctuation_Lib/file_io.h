@@ -16,6 +16,8 @@
 using namespace std;
 
 
+bool check_path(string path);
+
 void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path="");
 
 void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios, string path="");
@@ -30,6 +32,7 @@ string get_name_from_path(string path);
 bool in_string(string main, string sub);
 bool in_string(string main, vector<string> subs, bool all = false);
 vector<string> split(string main, char delim = ' ');
+//vector<string> split(string main, string delim = " ");
 
 vector<int> get_centrals(string dir_path, int div);
 
