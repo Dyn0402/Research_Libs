@@ -39,7 +39,16 @@ vector<int> get_Rs(const vector<double>& angles, int divisions) {
 // Take set of angles and divide 2pi azimuth into bin_num bins of size bin_width with random spacing between bins.
 // Count number of angles within each bin and return this histogram. First bin always starts at 0 so angles should be rotated beforehand.
 vector<int> get_Rs(const vector<double>& angles, double bin_width, TRandom3 *r, int bin_num) {
-	if(bin_num > 2*M_PI / bin_width) { bin_num = (int) 2*M_PI / bin_width; }  // If greater than max possible bins, set to max bins.
+	if(bin_width > 2*M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
+		cout << "get_Rs bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
+		bin_width = 2*M_PI;
+	}
+	if(bin_num > 2*M_PI / bin_width) {  // If greater than max possible bins, set to max bins.
+		cout << "Asked for " << bin_num << " bins, " << flush;
+		bin_num = (int) 2*M_PI / bin_width;
+		cout << "setting to max of " << bin_num << endl;
+	}
+
 	vector<int> Rs(bin_num, 0);
 
 	vector<pair<double, double>> bins(bin_num, {0, 0});
