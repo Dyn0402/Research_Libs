@@ -31,7 +31,7 @@ using namespace std;
 
 // Structors
 AzimuthBinData::AzimuthBinData() {
-	divs = 0;
+	divs = 120;
 	num_ratios = -1;
 	diff_divisor = 1;
 }
@@ -290,7 +290,7 @@ void AzimuthBinData::gen_proton_dist() {
 		for(auto &bin:event.second) {
 			proton_dist[event.first] += bin.second;
 		}
-		proton_dist[event.first] /= divs;
+//		proton_dist[event.first] /= divs;  I think this was to normalize dist to number of events.
 	}
 	proton_dist_gen = true;
 }
@@ -319,7 +319,7 @@ void AzimuthBinData::gen_ratio_hist() {
 void AzimuthBinData::gen_diff_hist() {
 	for(auto &event:bin_data) {
 		for(auto &bin:event.second) {
-			double diff = bin.first - (double)event.first / divs;
+			double diff = bin.first - (double)event.first * divs / 360;
 			diff_hist[diff] += bin.second;
 		}
 	}
@@ -329,7 +329,7 @@ void AzimuthBinData::gen_diff_hist() {
 void AzimuthBinData::gen_diff_slice_hist() {
 	for(auto &event:bin_data) {
 		for(auto &bin:event.second) {
-			double diff = bin.first - (double)event.first / divs;
+			double diff = bin.first - (double)event.first * divs / 360;
 			diff_slice_hist[event.first][diff] += bin.second;
 		}
 	}
@@ -342,7 +342,7 @@ void AzimuthBinData::canvas_2d_dist(string name, double p_clust) {
 	if(bin_data.size() <= 0) { return; }  // Bad workaround, fix.
 	TH2I *hist = ratios_map_to_hist(bin_data, name);
 	TCanvas *can = new TCanvas((name+"_Can").data());
-	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/"+to_string(divs)).data(), -0.5, 0.5+(--bin_data.end())->first);
+	TF1 *avg_line = new TF1((name+"_avg").data(), ("x/360.0*"+to_string(divs)).data(), -0.5, 0.5+(--bin_data.end())->first);
 	TF1 *max_line = new TF1((name+"_max").data(), "x", -0.5, 0.5+(--bin_data.end())->first);
 	max_line->SetLineColor(4);
 	gStyle->SetOptStat("KSiouRMen");  //221112211
@@ -352,7 +352,7 @@ void AzimuthBinData::canvas_2d_dist(string name, double p_clust) {
 	avg_line->Draw("same");
 
 	auto legend = new TLegend(0.1, 0.45, 0.4, 0.59);
-	legend->AddEntry((name+"_avg").data(), ("Average Ratio (x/"+to_string(divs)+")").data(), "l");
+	legend->AddEntry((name+"_avg").data(), ("Average Ratio (x*360/"+to_string(divs)+")").data(), "l");
 	legend->AddEntry((name+"_max").data(), "Maximum Ratio (x)", "l");
 
 	if(p_clust != -1) {
@@ -409,7 +409,7 @@ void AzimuthBinData::canvas_diff_dist(string name, string div_flag) {
 	TH1D *hist = new TH1D(name.data(), name.data(), 1001, -20, 20);  // Guess at binning/range, fix.
 	for(auto &event:bin_data) {
 		for(auto &bin:event.second) {
-			hist->Fill((bin.first - (double)event.first / divs) / divisor, bin.second);
+			hist->Fill((bin.first - (double)event.first * divs / 360) / divisor, bin.second);
 		}
 	}
 	TCanvas *can = new TCanvas((name+"_Can").data());
