@@ -220,6 +220,8 @@ bool in_string(string main, vector<string> subs, bool all) {
 
 // Emulation of Python split function. Split string into vector of strings on delim.
 vector<string> split(string main, char delim) {
+	if(main.size() == 0) { return {}; }
+
 	vector<string> split_strings {""};
 	for(char x:main) {
 		if(x == delim) {
