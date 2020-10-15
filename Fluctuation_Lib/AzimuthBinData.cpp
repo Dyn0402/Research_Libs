@@ -405,9 +405,11 @@ void AzimuthBinData::canvas_ratio_dist(string name) {
 void AzimuthBinData::canvas_diff_dist(string name, string div_flag) {
 	if(!diff_hist_gen) { gen_diff_hist(); }
 	double divisor = 1;
-	if(div_flag == "yes") { divisor = diff_divisor; }
+//	if(div_flag == "yes") { divisor = diff_divisor; }
 	TH1D *hist = new TH1D(name.data(), name.data(), 1001, -20, 20);  // Guess at binning/range, fix.
 	for(auto &event:bin_data) {
+		if(div_flag == "yes") { divisor = diff_slice_divisor[event.first]; }
+		else { divisor = 1; }
 		for(auto &bin:event.second) {
 			hist->Fill((bin.first - (double)event.first * divs / 360) / divisor, bin.second);
 		}

@@ -59,7 +59,7 @@ public:
 	AzimuthBinData& operator += (AzimuthBinData& obj);
 
 private:
-	map<int, map<int, int>> bin_data;  // Base data storage. Most efficient.
+	map<int, map<int, int>> bin_data;  // Base data storage. Most efficient. [particles_in_event][particles_in_bin]
 	map<int, int> proton_dist;
 	vector<double> ratio_vec;
 	map<double, int> ratio_hist;
@@ -68,7 +68,7 @@ private:
 	int divs;
 	int num_ratios;
 	double diff_divisor;
-	map<int, double> diff_slice_divisor;
+	map<int, double> diff_slice_divisor;  // Divisor by slices [particles_in_event]
 
 	bool bin_data_gen = false;
 	bool proton_dist_gen = false;
