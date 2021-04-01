@@ -5,10 +5,10 @@
  *      Author: Dylan Neff
  */
 
-
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <string>
 #include <map>
-#include <cmath>
 #include <limits>
 
 #include <TFile.h>

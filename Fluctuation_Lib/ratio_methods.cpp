@@ -6,11 +6,12 @@
  */
 
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include <tuple>
 #include <math.h>
-#include <cmath>
 
 #include "ratio_methods.h"
 
