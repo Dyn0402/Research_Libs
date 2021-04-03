@@ -59,6 +59,3 @@ Release/
 .cache-main
 .scala_dependencies
 .worksheet
-
-# Ignore visual studio temp folder
-.vs/
