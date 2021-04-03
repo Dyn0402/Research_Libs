@@ -6,10 +6,11 @@
  */
 
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include <tuple>
-#include <cmath>
 
 #include <TH1.h>
 #include <TF1.h>
