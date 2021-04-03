@@ -13,12 +13,7 @@
 #include <string>
 #include <sstream>
 #include <map>
-
-#ifdef _WIN32
-#include "dirent_win.h"
-#else
 #include <dirent.h>
-#endif
 
 #include <TFile.h>
 #include <TH1.h>

@@ -11,13 +11,8 @@
 #include <string>
 #include <sstream>
 #include <map>
+#include <dirent.h>
 #include <sys/stat.h>
-
-#ifdef _WIN32
-	#include "dirent_win.h"
-#else
-	#include <dirent.h>
-#endif
 
 #include "file_io.h"
 
