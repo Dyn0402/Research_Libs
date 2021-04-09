@@ -33,6 +33,8 @@ bool in_string(string main, string sub);
 bool in_string(string main, vector<string> subs, bool all = false);
 vector<string> split(string main, char delim = ' ');
 //vector<string> split(string main, string delim = " ");
+string find_replace(string main, string find, string replace);
+void mkdir(string path, bool recreate=false);
 
 vector<int> get_centrals(string dir_path, int div);
 

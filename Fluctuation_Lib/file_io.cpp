@@ -14,9 +14,11 @@
 #include <sys/stat.h>
 
 #ifdef _WIN32
-	#include "dirent_win.h"
+#include "dirent_win.h"
+static const std::string platform = "win";
 #else
-	#include <dirent.h>
+#include <dirent.h>
+static const std::string platform = "lin";
 #endif
 
 #include "file_io.h"
@@ -266,6 +268,50 @@ vector<string> split(string main, char delim) {
 //	}
 //	return(split_strings);
 //}
+
+
+// Find all occurances of find in string main and replace with replace. Return altered main.
+string find_replace(string main, string find, string replace) {
+	string::size_type n = 0;
+	while ((n = main.find(find, n)) != string::npos) {
+		main.replace(n, find.size(), replace);
+		n += replace.size();
+	}
+
+	return main;
+}
+
+
+// Make directory corresponding to path. If recreate is true, delete directory before making it again.
+void mkdir(string path, bool recreate) {
+	if (platform == "win") { path = find_replace(path, "/", "\\"); }
+
+	struct stat info;
+	int find_stat = stat(path.data(), &info);
+
+	//if (find_stat != 0) { cout << "Cannot access " << path << endl; }
+	if (info.st_mode & S_IFDIR) {  // Directory exists
+		if (recreate) {
+			if (platform == "lin") { int i = system(("rm -r " + path).data()); }
+			else if (platform == "win") { int i = system(("rmdir /Q /S " + path).data()); }
+		}
+		else { return; }
+	}  // Else directory does not exist
+	
+	if (system(("mkdir " + path).data())) { cout << "Could not create output directory " << path << endl; }
+
+	//if (platform == "lin") {
+	//	if (recreate) { int i = system(("rm -r " + path).data()); }
+	//	int fail = system(("mkdir " + path).data());
+	//	if (fail && recreate) { cout << "Could not create output directory " << path << endl; }
+	//}
+	//else if (platform == "win") {
+	//	path = find_replace(path, "/", "\\");
+	//	if (recreate) { int i = system(("rmdir " + path).data()); }
+	//	int fail = system(("mkdir " + path).data());
+	//	if (fail && recreate) { cout << "Could not create output directory " << path << endl; }
+	//}
+}
 
 
 // Return list of all centralities of specific div that exist in dir_path
