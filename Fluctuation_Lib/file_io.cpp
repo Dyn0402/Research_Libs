@@ -167,8 +167,9 @@ vector<string> split_string_by_char(string str, char del) {
 }
 
 
-//Return name (not path) of all files in dir_path with extension ext.
-vector<string> get_files_in_dir(string dir_path, string ext, string out) {
+// Return name (not path) of all files in dir_path with extension ext.
+// If dirs, get directories instead of files and ignore ext.
+vector<string> get_files_in_dir(string dir_path, string ext, string out, bool dirs) {
 	vector<string> files;
 	struct stat info;
 
@@ -178,10 +179,16 @@ vector<string> get_files_in_dir(string dir_path, string ext, string out) {
 		DIR* files_dir = opendir(dir_path.data());
 		struct dirent* dp;
 		while((dp=readdir(files_dir)) != NULL) {
-			string file = dp->d_name;
-			vector<string> fields = split_string_by_char(file, '.');
-			if(fields.back() == ext) {
-				files.push_back(file);
+			if(dirs) {
+				if(dp->d_type == DT_DIR) {
+					files.push_back(dp->d_name);
+				}
+			} else {
+				string file = dp->d_name;
+				vector<string> fields = split_string_by_char(file, '.');
+				if(fields.back() == ext) {
+					files.push_back(file);
+				}
 			}
 		}
 		if(out == "path") {
@@ -244,30 +251,44 @@ vector<string> split(string main, char delim) {
 
 
 // Emulation of Python split function. Split string into vector of strings on delim.
-//vector<string> split(string main, string delim) {
-//	if(delim.size() <= 0) { return main; }
-//
-//	vector<string> split_strings {""};
-//	int main_index = 0;
-//	while(main_index < (int)main.size()) {
-//		int sub_index = 0;
-//		string temp = "";
-//		while(main[main_index] == delim[sub_index]) {
-//			//
-//		}
-//		split_strings.back().insert(split_strings.back().begin(), temp.begin(), temp.end());
-//	}
-//	for (char x:main) {
-//		if(x == delim[0]) {
-//			if(split_strings.back() != "") {
-//				split_strings.push_back("");
-//			}
-//		} else {
-//			split_strings.back() += x;
-//		}
-//	}
-//	return(split_strings);
-//}
+vector<string> split(string main, string delim) {
+	if(delim.size() <= 0) { return {}; }
+	size_t index = main.find(delim);
+
+	vector<string> split_strings {};
+	do {
+		split_strings.push_back(main.substr(0, index));
+		main = main.substr(index + delim.size());
+		index = main.find(delim);
+	}
+	while(index != string::npos);
+
+	if(main.size() > 0) { split_strings.push_back(main); }
+
+	return(split_strings);
+}
+
+
+// Find last instance of flag and return preceding string.
+// If tail, find first instance and return following string.
+string strip_flag(string main, string flag, bool keep_flag, bool tail) {
+	size_t pos = main.rfind(flag);
+	if(tail) {
+		if(pos == string::npos) {
+			return main;
+		} else {
+			if(!keep_flag) { pos += flag.size(); }
+			return(main.substr(pos, main.size() - pos));
+		}
+	} else {
+		if(pos == string::npos) {
+			return main;
+		} else {
+			if(keep_flag) { pos += flag.size(); }
+			return(main.substr(0, pos));
+		}
+	}
+}
 
 
 // Find all occurances of find in string main and replace with replace. Return altered main.
@@ -347,4 +368,30 @@ vector<int> get_centrals(string dir_path, int div) {
 string get_name_from_path(string path) {
 	string file_name = split_string_by_char(path, '/').back();
 	return(file_name);
+}
+
+
+// Find flag in string separated by delims, return string trailing flag before next delim
+vector<string> get_flag_trail(string main, string flag, string delim) {
+	vector<string> split_string = split(main, delim);
+
+	vector<string> trails {};
+	for(string sub_str:split_string) {
+		size_t index = sub_str.find(flag);
+		if(index != string::npos) {
+			trails.push_back(sub_str.substr(index + flag.size()));
+		}
+	}
+	return(trails);
+}
+
+
+// Given number as string, convert to float with decimal place given via dec_pos, default 1 (100 --> 1.00)
+float str_num_dec(string main, int dec_pos) {
+	int num_int;
+	stringstream(main) >> num_int;
+	int len = (main[0] == '-') ? main.size() - 1 : main.size();
+	float num_float = num_int / pow(10, len - dec_pos);
+
+	return(num_float);
 }
