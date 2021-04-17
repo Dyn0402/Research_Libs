@@ -310,28 +310,15 @@ void mkdir(string path, bool recreate) {
 	struct stat info;
 	int find_stat = stat(path.data(), &info);
 
-	//if (find_stat != 0) { cout << "Cannot access " << path << endl; }
-	if (info.st_mode & S_IFDIR) {  // Directory exists
+	if (info.st_mode & S_IFDIR && find_stat == 0) {  // Directory exists
 		if (recreate) {
 			if (platform == "lin") { int i = system(("rm -r " + path).data()); }
 			else if (platform == "win") { int i = system(("rmdir /Q /S " + path).data()); }
 		}
 		else { return; }
-	}  // Else directory does not exist
+	}  // Else directory does not exist or path is not a directory
 	
 	if (system(("mkdir " + path).data())) { cout << "Could not create output directory " << path << endl; }
-
-	//if (platform == "lin") {
-	//	if (recreate) { int i = system(("rm -r " + path).data()); }
-	//	int fail = system(("mkdir " + path).data());
-	//	if (fail && recreate) { cout << "Could not create output directory " << path << endl; }
-	//}
-	//else if (platform == "win") {
-	//	path = find_replace(path, "/", "\\");
-	//	if (recreate) { int i = system(("rmdir " + path).data()); }
-	//	int fail = system(("mkdir " + path).data());
-	//	if (fail && recreate) { cout << "Could not create output directory " << path << endl; }
-	//}
 }
 
 
