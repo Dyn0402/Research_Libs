@@ -257,16 +257,8 @@ void Stats::calc_standard_deviation(bool err) {
 	}
 	if(err && !standard_deviation_calc.err) {
 		calc_central_moment(4);
-//		standard_deviation.err = pow((central_moment[4] / pow(standard_deviation.val, 4) - 1) / (4 * dist_num), 0.5);
 		double m4 = central_moment[4] / pow(central_moment[2], 2);
-		cout << "cm4: " << central_moment[4] << " cm2: " << central_moment[2] << " m4: " << m4 << endl;
-		cout << "m4 - 1: " << (m4 - 1) << endl;
-		cout << "(m4 - 1) * central_moment[2]: " << (m4 - 1) * central_moment[2] << endl;
-		cout << "dist_num: " << dist_num << endl;
-		cout << "(4 * dist_num): " << (4 * dist_num) << endl;
-		cout << "(m4 - 1) * central_moment[2] / (4 * dist_num): " << (m4 - 1) * central_moment[2] / (4 * dist_num) << endl;
-		cout << "sd err: " << pow((m4 - 1) * central_moment[2] / (4 * dist_num), 0.5) << endl;
-		standard_deviation.err = pow((m4 - 1) * central_moment[2] / (4 * dist_num), 0.5);
+		standard_deviation.err = pow((m4 - 1) * central_moment[2] / (dist_num * 4), 0.5);
 		standard_deviation_calc.err = true;
 	}
 }

@@ -407,6 +407,29 @@ void AzimuthBinData::canvas_ratio_dist(string name) {
 }
 
 
+void AzimuthBinData::canvas_ratio_dist_slow(string name, int bin_mult) {
+	TH1D* hist = new TH1D(name.data(), name.data(), 23 * bin_mult, -0.05, 1.1);
+	for (auto& event : bin_data) {
+		for (auto& bin : event.second) {
+			for (int i = 0; i < bin.second; i++) {
+				hist->Fill((double)bin.first / event.first);
+			}
+		}
+	}
+	TCanvas* can = new TCanvas((name + "_Can").data());
+	can->SetLogy();
+	gStyle->SetOptStat("KSiouRMen");  //221112211
+	hist->Draw("HIST");
+	gPad->Update();
+
+	can->Write();
+
+
+	delete hist;
+	delete can;
+}
+
+
 void AzimuthBinData::canvas_diff_dist(string name, string div_flag) {
 	if(!diff_hist_gen) { gen_diff_hist(); }
 	double divisor = 1;

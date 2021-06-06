@@ -52,6 +52,7 @@ public:
 	// Plotters
 	void canvas_2d_dist(string name, double p_clust = -99);
 	void canvas_ratio_dist(string name);
+	void canvas_ratio_dist_slow(string name, int bin_mult = 1);
 	void canvas_diff_dist(string name, string div_flag = "yes");
 	void canvas_proton_dist(string name);
 
