@@ -24,13 +24,11 @@ using namespace std;
 
 
 // Represents a measurement with a value and a corresponding uncertainty.
+// Only need this for bools, could probably transition to Measure class.
 template <typename T>
 struct measure {
 	T val, err;
 };
-
-// Equations to propagate error with measure type. Should probably build into its own class?
-measure<double> divide(measure<double> numerator, measure<double> denominator);
 
 
 class Stats {
@@ -58,7 +56,7 @@ public:
 	Measure get_cumulant(int order);
 	Measure get_raw_moment(int order);
 	Measure get_central_moment(int order);
-	int get_dist_num();
+	long long int get_dist_num();
 	bool get_nan_check();
 
 private:
@@ -80,7 +78,7 @@ private:
 	map<double, int> distribution_hist;
 
 	bool nan_check;
-	int dist_num;
+	long long int dist_num;
 
 	string dist_type; // "vec" for vector<double>, "hist" for map<double, int>
 

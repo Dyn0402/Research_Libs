@@ -182,13 +182,13 @@ Measure Stats::get_raw_moment(int order) {
 }
 
 // Return number of entries in distribution
-int Stats::get_dist_num() {
-	return(dist_num);
+long long int Stats::get_dist_num() {
+	return dist_num;
 }
 
 // Return boolean nan_check indicating whether nan warning is printed
 bool Stats::get_nan_check() {
-	return(nan_check);
+	return nan_check;
 }
 
 
@@ -227,12 +227,12 @@ void Stats::calc_mean(bool err) {
 	if(!mean_calc.val) {
 		double sum = 0.0;
 		if(dist_type == "vec") {
-			for(double element:distribution) {
+			for (const double& element:distribution) {
 				sum += element;
 			}
 			mean.val = sum / distribution.size();
 		} else if(dist_type == "hist") {
-			for(pair<double, int> entry:distribution_hist) {
+			for (const pair<double, int>& entry:distribution_hist) {
 				sum += entry.second * entry.first;
 			}
 			mean.val = sum / dist_num;
@@ -259,6 +259,13 @@ void Stats::calc_standard_deviation(bool err) {
 		calc_central_moment(4);
 //		standard_deviation.err = pow((central_moment[4] / pow(standard_deviation.val, 4) - 1) / (4 * dist_num), 0.5);
 		double m4 = central_moment[4] / pow(central_moment[2], 2);
+		cout << "cm4: " << central_moment[4] << " cm2: " << central_moment[2] << " m4: " << m4 << endl;
+		cout << "m4 - 1: " << (m4 - 1) << endl;
+		cout << "(m4 - 1) * central_moment[2]: " << (m4 - 1) * central_moment[2] << endl;
+		cout << "dist_num: " << dist_num << endl;
+		cout << "(4 * dist_num): " << (4 * dist_num) << endl;
+		cout << "(m4 - 1) * central_moment[2] / (4 * dist_num): " << (m4 - 1) * central_moment[2] / (4 * dist_num) << endl;
+		cout << "sd err: " << pow((m4 - 1) * central_moment[2] / (4 * dist_num), 0.5) << endl;
 		standard_deviation.err = pow((m4 - 1) * central_moment[2] / (4 * dist_num), 0.5);
 		standard_deviation_calc.err = true;
 	}
@@ -424,11 +431,11 @@ void Stats::calc_central_moment(int n) {
 		if(!mean_calc.val) { calc_mean(false); }
 		double sum = 0.0;
 		if(dist_type == "vec") {
-			for(double element:distribution) {
+			for (const double& element:distribution) {
 				sum += pow(element - mean.val, n);
 			}
 		} else if(dist_type == "hist") {
-			for(pair<double, int> entry:distribution_hist) {
+			for (const pair<double, int>& entry:distribution_hist) {
 				sum += entry.second * pow(entry.first - mean.val, n);
 			}
 		} else { cout << "dist_type not recognized." << endl; }
@@ -448,13 +455,13 @@ void Stats::calc_raw_moment(vector<int> ns) {
 
 	map<int, double> sums;
 	if(dist_type == "vec") {
-		for(double element:distribution) {
+		for (const double& element:distribution) {
 			for(int n:calc_ns) {
 				sums[n] += pow(element, n);
 			}
 		}
 	} else if(dist_type == "hist") {
-		for(pair<double, int> entry:distribution_hist) {
+		for (const pair<double, int>& entry:distribution_hist) {
 			for(int n:calc_ns) {
 				sums[n] += entry.second * pow(entry.first, n);
 			}
@@ -481,7 +488,7 @@ void Stats::calc_dist_num() {
 		dist_num = distribution.size();
 	} else if(dist_type == "hist") {
 		dist_num = 0;
-		for(pair<double, int> entry:distribution_hist) {
+		for(const pair<double, int>& entry:distribution_hist) {
 			dist_num += entry.second;
 		}
 	} else { cout << "dist_type not recognized." << endl; }
