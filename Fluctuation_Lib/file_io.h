@@ -39,6 +39,7 @@ float str_num_dec(string main, int dec_pos = 1);
 
 string find_replace(string main, string find, string replace);
 void mkdir(string path, bool recreate = false);
+bool check_dir(string path);
 
 vector<int> get_centrals(string dir_path, int div);
 

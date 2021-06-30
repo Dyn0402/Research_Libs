@@ -322,6 +322,21 @@ void mkdir(string path, bool recreate) {
 }
 
 
+// Check if directory corresponding to path exists.
+bool check_dir(string path) {
+	if (platform == "win") { path = find_replace(path, "/", "\\"); }
+
+	struct stat info;
+	int find_stat = stat(path.data(), &info);
+
+	if ((info.st_mode & S_IFDIR) && find_stat == 0) {  // Directory exists
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
 // Return list of all centralities of specific div that exist in dir_path
 vector<int> get_centrals(string dir_path, int div) {
 	vector<int> centrals;
