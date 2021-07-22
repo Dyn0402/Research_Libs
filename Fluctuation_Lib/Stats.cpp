@@ -376,6 +376,16 @@ void Stats::calc_cumulant(int order, bool err) {
 			cumulant[order].val = mu[4] - 3 * pow(mu[2], 2);
 			cumulant_calc[order].val = true;
 		}
+		else if(order == 5) {  // Not cross-checked! arxiv:1809.08892
+			calc_central_moment({2,3,5});
+			cumulant[order].val = mu[5] - 10 * mu[3] * mu[2];
+			cumulant_calc[order].val = true;
+		}
+		else if(order == 6) {  // Not cross-checked! arxiv:1809.08892
+			calc_central_moment({2,3,4,6});
+			cumulant[order].val = mu[6] - 15 * mu[4] *mu[2] - 10 * pow(mu[3], 2) + 30 * pow(mu[2], 3);
+			cumulant_calc[order].val = true;
+		}
 		else {
 			cout << "Cumulant of order " << order << " not implemented." << endl;
 		}
@@ -400,6 +410,16 @@ void Stats::calc_cumulant(int order, bool err) {
 		else if(order == 4) {
 			calc_central_moment({2,3,4,5,6,8});
 			cumulant[order].err = pow(( mu[8] - 12*mu[6]*mu[2] - 8*mu[5]*mu[3] - pow(mu[4], 2) + 48*mu[4]*pow(mu[2],2) + 64*pow(mu[3],2)*mu[2] - 36*pow(mu[2],4) ) / dist_num, 0.5);
+			cumulant_calc[order].err = true;
+		}
+		else if(order == 5) {  // Not cross-checked! arxiv:1809.08892
+			calc_central_moment({2,3,4,5,6,7,8,10});
+			cumulant[order].err = pow(( mu[10] - pow(mu[5],2) - 10*mu[4]*mu[6] + 900*pow(mu[2],5) - 20*mu[3]*mu[7] - 20*mu[8]*mu[2] + 125*mu[2]*pow(mu[4],2) + 200*mu[4]*pow(mu[3],2) - 1000*pow(mu[3]*mu[2],2) + 160*mu[6]*pow(mu[2],2) - 900*mu[4]*pow(mu[2],3) + 240*mu[2]*mu[3]*mu[5] ) / dist_num, 0.5);
+			cumulant_calc[order].err = true;
+		}
+		else if(order == 6) {  // Not cross-checked! arxiv:1809.08892
+			calc_central_moment({2,3,4,5,6,7,8,9,10,12});
+			cumulant[order].err = pow(( -30*mu[4]*mu[8] + 510*mu[4]*mu[2]*mu[6] + 1020*mu[4]*mu[3]*mu[5] + 405*mu[8]*pow(mu[2],2) - 2880*mu[6]*pow(mu[2],3) - 9720*mu[3]*mu[5]*pow(mu[2],2) - 30*mu[2]*mu[10] + 840*mu[2]*mu[3]*mu[7] + 216*mu[2]*pow(mu[5],2) - 40*mu[3]*mu[9] + 440*mu[6]*pow(mu[3],2) - 3600*pow(mu[2]*mu[4],2) - 9600*mu[2]*mu[4]*pow(mu[3],2) + 13500*mu[4]*pow(mu[2],4) + 39600*pow(mu[2],3)*pow(mu[3],2) + mu[12] - pow(mu[6],2) - 12*mu[5]*mu[7] + 225*pow(mu[4],3) - 8100*pow(mu[2],6) - 400*pow(mu[3],4) ) / dist_num, 0.5);
 			cumulant_calc[order].err = true;
 		}
 		else {
