@@ -182,18 +182,18 @@ map<double, int> AzimuthBinData::get_diff_slice_proj(string div_flag) {
 	return div_diff_slice_proj;
 }
 
-int AzimuthBinData::get_num_bins() {
-	if(num_ratios < 0) {
+long AzimuthBinData::get_num_bins() {
+	if (num_ratios < 0) {
 		num_ratios = 0;
-		if(!ratio_hist_gen) {
+		if (!ratio_hist_gen) {
 			gen_ratio_hist();
 		}
-		for(auto &ratio:ratio_hist) {
+		for (auto &ratio : ratio_hist) {
 			num_ratios += ratio.second;
 		}
 	}
 
-	return(num_ratios);
+	return num_ratios;
 }
 
 double AzimuthBinData::get_diff_divisor() {
@@ -288,6 +288,17 @@ void AzimuthBinData::write_data(string unique_suffix, string dir_path, int div, 
 		out_file << endl;
 	}
 	out_file.close();
+}
+
+
+void AzimuthBinData::print_data() {
+	for (pair<int, map<int, int>> event : bin_data) {
+		cout << event.first << "\t" << flush;
+		for (pair<int, int> bin : event.second) {
+			cout << bin.first << ":" << bin.second << " " << flush;
+		}
+		cout << endl;
+	}
 }
 
 void AzimuthBinData::gen_proton_dist() {

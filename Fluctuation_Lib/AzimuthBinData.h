@@ -35,7 +35,7 @@ public:
 	map<int, map<double, int>> get_diff_slice_hist(string div_flag = "yes");
 	map<double, int> get_diff_slice_proj(string div_flag = "yes");
 	int get_divs();
-	int get_num_bins();
+	long get_num_bins();
 	double get_diff_divisor();
 
 	// Setters
@@ -48,6 +48,7 @@ public:
 	void read_data_from_file(string file_path);
 	void read_data_from_dir(string dir_path, int div, int cent = 99);
 	void write_data(string job_id, string dir_path, int div, int cent = 99);
+	void print_data();
 
 	// Plotters
 	void canvas_2d_dist(string name, double p_clust = -99);
@@ -67,7 +68,7 @@ private:
 	map<double, int> diff_hist;
 	map<int, map<double, int>> diff_slice_hist;
 	int divs;
-	int num_ratios;
+	long num_ratios;
 	double diff_divisor;
 	map<int, double> diff_slice_divisor;  // Divisor by slices [particles_in_event]
 

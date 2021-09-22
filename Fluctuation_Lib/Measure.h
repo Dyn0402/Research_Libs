@@ -117,7 +117,7 @@ public:
 
 	operator std::string() const {
 		std::ostringstream os("");
-		os << std::setprecision(15) << val << " ±" << std::setprecision(15) << err << std::ends;
+		os << std::setprecision(15) << val << " ± " << std::setprecision(15) << err << std::ends;
 		return os.str();
 	}
 
