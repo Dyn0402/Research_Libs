@@ -40,7 +40,7 @@ bool check_path(string path) {
 	}
 }
 
-void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path) {
+void write_tree_data(string job_id, map<int, map<int, map<int, map<int, long>>>> data, string path) {
 	struct stat info;
 
 	if( stat(path.data(), &info) !=0 ) {
@@ -51,21 +51,66 @@ void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> 
 }
 
 
-void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios, string path) {
-	for(pair<int, map<int, map<int, map<int, int>>>> divs:ratios) {
-		for(pair<int, map<int, map<int, int>>> cents:divs.second) {
+void write_tree_data_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> data, map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs, string path) {
+	struct stat info;
+
+	if (stat(path.data(), &info) != 0) {
+		cout << "Can't access path: " << path << " Skipping following read/write." << endl;
+	}
+	else {
+		write_ratios_bootstrap(job_id, data, data_bs, path);
+	}
+}
+
+
+void write_ratios(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, string path) {
+	for(pair<int, map<int, map<int, map<int, long>>>> divs:ratios) {
+		for(pair<int, map<int, map<int, long>>> cents:divs.second) {
 			string out_name = path + io::ratios_file_pre + io::file_name_delimeter;
 			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs.first);
 			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string(cents.first);
 			out_name += io::file_name_delimeter + job_id + io::file_ext;
 			ofstream out_file(out_name);
-			for(pair<int, map<int, int>> nprotons:cents.second) {
+			for(pair<int, map<int, long>> nprotons:cents.second) {
 				out_file << to_string(nprotons.first) << io::data_delimeters[0];
-				for(pair<int, int> bin_protons:nprotons.second) {
+				for(pair<int, long> bin_protons:nprotons.second) {
 					out_file << to_string(bin_protons.first) << io::data_delimeters[2] << to_string(bin_protons.second) << io::data_delimeters[1];
 				}
 				out_file << endl;
 			}
+			out_file.close();
+		}
+	}
+}
+
+
+void write_ratios_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, map<int, map<int, map<int, map<int, map<int, long>>>>> ratios_bs, string path) {
+	for (pair<int, map<int, map<int, map<int, long>>>> divs : ratios) {
+		for (pair<int, map<int, map<int, long>>> cents : divs.second) {
+			string out_name = path + io::ratios_file_pre + io::file_name_delimeter;
+			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs.first);
+			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string(cents.first);
+			out_name += io::file_name_delimeter + job_id + io::file_ext;
+			ofstream out_file(out_name);
+			for (pair<int, map<int, long>> nprotons : cents.second) {
+				out_file << to_string(nprotons.first) << io::data_delimeters[0];
+				for (pair<int, long> bin_protons : nprotons.second) {
+					out_file << to_string(bin_protons.first) << io::data_delimeters[2] << to_string(bin_protons.second) << io::data_delimeters[1];
+				}
+				out_file << endl;
+			}
+
+			for (pair<int, map<int, map<int, long>>> bootstraps : ratios_bs[divs.first][cents.first]) {
+				out_file << endl << "bootstrap #" << bootstraps.first << endl;
+				for (pair<int, map<int, long>> nprotons : bootstraps.second) {
+					out_file << to_string(nprotons.first) << io::data_delimeters[0];
+					for (pair<int, long> bin_protons : nprotons.second) {
+						out_file << to_string(bin_protons.first) << io::data_delimeters[2] << to_string(bin_protons.second) << io::data_delimeters[1];
+					}
+					out_file << endl;
+				}
+			}
+
 			out_file.close();
 		}
 	}

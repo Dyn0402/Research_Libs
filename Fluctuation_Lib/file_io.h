@@ -18,10 +18,13 @@ using namespace std;
 
 bool check_path(string path);
 
-void write_tree_data(string job_id, map<int, map<int, map<int, map<int, int>>>> data, string path="");
+void write_tree_data(string job_id, map<int, map<int, map<int, map<int, long>>>> data, string path="");
+void write_tree_data_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> data, map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs, string path);
 
-void write_ratios(string job_id, map<int, map<int, map<int, map<int, int>>>> ratios, string path="");
+void write_ratios(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, string path="");
+void write_ratios_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, map<int, map<int, map<int, map<int, map<int, long>>>>> ratios_bs, string path = "");
 void write_nprotons(string job_id, map<int, map<int, int>> good_protons, string path="");
+
 
 map<int, int> read_nprotons(string path, int cent);
 map<int, map<int, int>> read_ratios(string path, int div, int cent);
