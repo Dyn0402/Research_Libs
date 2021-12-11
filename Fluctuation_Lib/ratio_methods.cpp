@@ -83,40 +83,17 @@ vector<int> get_Rs(const vector<double>& angles, double bin_width, TRandom3 *r, 
 // Count number of angles within each bin and return this histogram. First bin always starts at 0 so angles should be rotated beforehand.
 // angles need to be sorted before input!!
 map<int, int> get_resamples(vector<double> angles, double bin_width, int samples) {
-	if (bin_width > 2 * M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
-		cout << "get_resamples bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
-		bin_width = 2 * M_PI;
-	}
-	if (samples < 0) {  // If samples negative, complain
-		cout << "get_resamples samples " << samples << " less than 0, taking absolute value: " << samples << "-->" << abs(samples) << endl;
-		samples = abs(samples);
-	}
+	// Comment out angle checks for slight performance uplift.
+//	if (bin_width > 2 * M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
+//		cout << "get_resamples bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
+//		bin_width = 2 * M_PI;
+//	}
+//	if (samples < 0) {  // If samples negative, complain
+//		cout << "get_resamples samples " << samples << " less than 0, taking absolute value: " << samples << "-->" << abs(samples) << endl;
+//		samples = abs(samples);
+//	}
 
 	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
-
-	//vector<int> hist(samples);
-	//if (samples == 0) { return hist; }
-	//double bin_low = 0;
-	//double bin_high = bin_width;
-	//double dphi = 2 * M_PI / samples;
-
-	//unsigned num_angles = angles.size();
-	//for (unsigned i = 0; i < num_angles; i++) {  // Duplicate angles past 2pi since bin_high will have to wrap around
-	//	if (angles[i] >= 2 * M_PI || angles[i] < 0) { cout << "get_resamples angle out of range " << angles[i] << endl; }
-	//	if (angles[i + 1] < angles[i]) { cout << "get_resamples angles unsorted! " << angles[i] << " > " << angles[i + 1] << endl; }
-	//	angles.push_back(angles[i] + 2 * M_PI); 
-	//}
-	//angles.push_back(4 * M_PI);  // Edge of range, high_index will sit here once it passes all angles
-
-	//int low_index = 0;  // Index of smallest angle greater than bin_low
-	//int high_index = 0;  // Index of smallest angle greater than bin_high
-	//for (int sample_i = 0; sample_i < samples; sample_i++) {
-	//	while (angles[low_index] < bin_low) { low_index++; }  // Don't count track (iterate) if less than bin_low
-	//	while (angles[high_index] < bin_high) { high_index++; }  // Count track (iterate) if less than bin_high
-	//	hist[sample_i] = high_index - low_index;  // Counts number of tracks in bin
-	//	bin_low += dphi;  // Rotate bin by dphi
-	//	bin_high += dphi;
-	//}
 
 	map<int, int> hist;  // first=number of tracks in bin, second=number of bins with {first} tracks
 	if (samples == 0) { return hist; }
@@ -126,8 +103,8 @@ map<int, int> get_resamples(vector<double> angles, double bin_width, int samples
 
 	unsigned num_angles = angles.size();
 	for (unsigned i = 0; i < num_angles; i++) {  // Duplicate angles past 2pi since bin_high will have to wrap around
-		if (angles[i] >= 2 * M_PI || angles[i] < 0) { cout << "get_resamples angle out of range " << angles[i] << endl; }
-		if (angles[i + 1] < angles[i]) { cout << "get_resamples angles unsorted! " << angles[i] << " > " << angles[i + 1] << endl; }
+//		if (angles[i] >= 2 * M_PI || angles[i] < 0) { cout << "get_resamples angle out of range " << angles[i] << endl; }
+//		if (angles[i + 1] < angles[i]) { cout << "get_resamples angles unsorted! " << angles[i] << " > " << angles[i + 1] << endl; }
 		angles.push_back(angles[i] + 2 * M_PI);
 	}
 	angles.push_back(4 * M_PI);  // Edge of range, high_index will sit here once it passes all angles
@@ -138,6 +115,54 @@ map<int, int> get_resamples(vector<double> angles, double bin_width, int samples
 		while (angles[low_index] < bin_low) { low_index++; }  // Don't count track (iterate) if less than bin_low
 		while (angles[high_index] < bin_high) { high_index++; }  // Count track (iterate) if less than bin_high
 		hist[high_index - low_index]++;  // Counts number of tracks in bin, add one to that value in the hist
+		bin_low += dphi;  // Rotate bin by dphi
+		bin_high += dphi;
+	}
+
+	return hist;
+}
+
+
+vector<int> get_resamples2(vector<double> angles, double bin_width, int samples) {
+	// Comment out angle checks for slight performance uplift.
+//	if (bin_width > 2 * M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
+//		cout << "get_resamples bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
+//		bin_width = 2 * M_PI;
+//	}
+//	if (samples < 0) {  // If samples negative, complain
+//		cout << "get_resamples samples " << samples << " less than 0, taking absolute value: " << samples << "-->" << abs(samples) << endl;
+//		samples = abs(samples);
+//	}
+
+	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
+
+//	map<int, int> hist;  // first=number of tracks in bin, second=number of bins with {first} tracks
+//	if (samples == 0) { return hist; }
+	double bin_low = 0;
+	double bin_high = bin_width;
+	double dphi = 2 * M_PI / samples;
+
+	unsigned num_angles = angles.size();
+	vector<int> hist(num_angles + 1, 0);
+	if (samples == 0) { return hist; }
+	for (unsigned i = 0; i < num_angles; i++) {  // Duplicate angles past 2pi since bin_high will have to wrap around
+//		if (angles[i] >= 2 * M_PI || angles[i] < 0) { cout << "get_resamples angle out of range " << angles[i] << endl; }
+//		if (angles[i + 1] < angles[i]) { cout << "get_resamples angles unsorted! " << angles[i] << " > " << angles[i + 1] << endl; }
+		angles.push_back(angles[i] + 2 * M_PI);
+	}
+	angles.push_back(4 * M_PI);  // Edge of range, high_index will sit here once it passes all angles
+
+	int low_index = 0;  // Index of smallest angle greater than bin_low
+	int high_index = 0;  // Index of smallest angle greater than bin_high
+//	int step = 0;
+//	int sample_i = 0;
+//	while (sample_i < samples) {
+	for (int sample_i = 0; sample_i < samples; sample_i++) {
+		while (angles[low_index] < bin_low) { low_index++; }  // Don't count track (iterate) if less than bin_low
+		while (angles[high_index] < bin_high) { high_index++; }  // Count track (iterate) if less than bin_high
+		hist[high_index - low_index]++;  // Counts number of tracks in bin, add one to that value in the hist
+//		step = (angles[high_index] - bin_high) / dphi;
+//		if ((angles[low_index] - bin_low) / dphi)
 		bin_low += dphi;  // Rotate bin by dphi
 		bin_high += dphi;
 	}
