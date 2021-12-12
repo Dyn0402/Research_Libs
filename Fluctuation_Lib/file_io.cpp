@@ -40,43 +40,64 @@ bool check_path(string path) {
 	}
 }
 
-void write_tree_data(string job_id, map<int, map<int, map<int, map<int, long>>>> data, string path) {
+void write_tree_data(string job_id, vector<vector<vector<vector<long>>>> &data, vector<int> divs, int cent_min, int particle_min, string path) {
 	struct stat info;
 
 	if( stat(path.data(), &info) !=0 ) {
 		cout << "Can't access path: " << path << " Skipping following read/write." << endl;
 	} else {
-		write_ratios(job_id, data, path);
+		write_dists(job_id, data, divs, cent_min, particle_min, path);
 	}
 }
 
 
-void write_tree_data_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> data, map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs, string path) {
+void write_tree_data_bootstrap(string job_id, vector<vector<vector<vector<long>>>> &data, vector<vector<vector<vector<vector<long>>>>> &data_bs, vector<int> divs, int cent_min, int particle_min, string path) {
 	struct stat info;
 
 	if (stat(path.data(), &info) != 0) {
 		cout << "Can't access path: " << path << " Skipping following read/write." << endl;
 	}
 	else {
-		write_ratios_bootstrap(job_id, data, data_bs, path);
+		write_dists_bootstrap(job_id, data, data_bs, divs, cent_min, particle_min, path);
 	}
 }
 
 
-void write_ratios(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, string path) {
-	for(pair<int, map<int, map<int, map<int, long>>>> divs:ratios) {
-		for(pair<int, map<int, map<int, long>>> cents:divs.second) {
+void write_dists(string job_id, vector<vector<vector<vector<long>>>> &data, vector<int> divs, int cent_min, int particle_min, string path) {
+	for (unsigned div_i=0; div_i < data.size(); div_i++) {
+		for (unsigned cent_i=0; cent_i < data[div_i].size(); cent_i++) {
+			bool write = false;
+			for (unsigned particle_bin=0; particle_bin < data[div_i][cent_i].size(); particle_bin++) {
+				for (long count : data[div_i][cent_i][particle_bin]) {
+					if (count != 0) {
+						write = true;
+						break;
+					}
+				}
+			}
+			if (!write) { continue; }  // Only write files with some nonzero data.
 			string out_name = path + io::ratios_file_pre + io::file_name_delimeter;
-			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs.first);
-			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string(cents.first);
+			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs[div_i]);
+			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string((int)cent_i + cent_min);
 			out_name += io::file_name_delimeter + job_id + io::file_ext;
 			ofstream out_file(out_name);
-			for(pair<int, map<int, long>> nprotons:cents.second) {
-				out_file << to_string(nprotons.first) << io::data_delimeters[0];
-				for(pair<int, long> bin_protons:nprotons.second) {
-					out_file << to_string(bin_protons.first) << io::data_delimeters[2] << to_string(bin_protons.second) << io::data_delimeters[1];
+			for (unsigned particle_bin=0; particle_bin < data[div_i][cent_i].size(); particle_bin++) {
+				write = false;
+				for (long count : data[div_i][cent_i][particle_bin]) {
+					if (count != 0) {
+						write = true;
+						break;
+					}
 				}
-				out_file << endl;
+				if (write) {
+					out_file << to_string(particle_bin + particle_min) << io::data_delimeters[0];
+					for (unsigned num_protons=0; num_protons < data[div_i][cent_i][particle_bin].size(); num_protons++) {
+						if (data[div_i][cent_i][particle_bin][num_protons] != 0) {
+							out_file << to_string(num_protons) << io::data_delimeters[2] << data[div_i][cent_i][particle_bin][num_protons] << io::data_delimeters[1];
+						}
+					}
+					out_file << endl;
+				}
 			}
 			out_file.close();
 		}
@@ -84,33 +105,65 @@ void write_ratios(string job_id, map<int, map<int, map<int, map<int, long>>>> ra
 }
 
 
-void write_ratios_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, map<int, map<int, map<int, map<int, map<int, long>>>>> ratios_bs, string path) {
-	for (pair<int, map<int, map<int, map<int, long>>>> divs : ratios) {
-		for (pair<int, map<int, map<int, long>>> cents : divs.second) {
+void write_dists_bootstrap(string job_id, vector<vector<vector<vector<long>>>> &data, vector<vector<vector<vector<vector<long>>>>> &data_bs, vector<int> divs, int cent_min, int particle_min, string path) {
+	for (unsigned div_i=0; div_i < data.size(); div_i++) {
+		for (unsigned cent_i=0; cent_i < data[div_i].size(); cent_i++) {
+			bool write = false;
+			for (unsigned particle_bin=0; particle_bin < data[div_i][cent_i].size(); particle_bin++) {
+				for (long count : data[div_i][cent_i][particle_bin]) {
+					if (count != 0) {
+						write = true;
+						break;
+					}
+				}
+			}
+			if (!write) { continue; }  // Only write files with some nonzero data.
 			string out_name = path + io::ratios_file_pre + io::file_name_delimeter;
-			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs.first);
-			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string(cents.first);
+			out_name += io::ratios_file_fields[0] + io::file_name_delimeter + to_string(divs[div_i]);
+			out_name += io::file_name_delimeter + io::ratios_file_fields[1] + io::file_name_delimeter + to_string((int)cent_i + cent_min);
 			out_name += io::file_name_delimeter + job_id + io::file_ext;
 			ofstream out_file(out_name);
-			for (pair<int, map<int, long>> nprotons : cents.second) {
-				out_file << to_string(nprotons.first) << io::data_delimeters[0];
-				for (pair<int, long> bin_protons : nprotons.second) {
-					out_file << to_string(bin_protons.first) << io::data_delimeters[2] << to_string(bin_protons.second) << io::data_delimeters[1];
+			for (unsigned particle_bin=0; particle_bin < data[div_i][cent_i].size(); particle_bin++) {
+				write = false;
+				for (long count : data[div_i][cent_i][particle_bin]) {
+					if (count != 0) {
+						write = true;
+						break;
+					}
 				}
-				out_file << endl;
-			}
-
-			for (pair<int, map<int, map<int, long>>> bootstraps : ratios_bs[divs.first][cents.first]) {
-				out_file << endl << "bootstrap #" << bootstraps.first << endl;
-				for (pair<int, map<int, long>> nprotons : bootstraps.second) {
-					out_file << to_string(nprotons.first) << io::data_delimeters[0];
-					for (pair<int, long> bin_protons : nprotons.second) {
-						out_file << to_string(bin_protons.first) << io::data_delimeters[2] << to_string(bin_protons.second) << io::data_delimeters[1];
+				if (write) {
+					out_file << to_string(particle_bin + particle_min) << io::data_delimeters[0];
+					for (unsigned num_protons=0; num_protons < data[div_i][cent_i][particle_bin].size(); num_protons++) {
+						if (data[div_i][cent_i][particle_bin][num_protons] != 0) {
+							out_file << to_string(num_protons) << io::data_delimeters[2] << data[div_i][cent_i][particle_bin][num_protons] << io::data_delimeters[1];
+						}
 					}
 					out_file << endl;
 				}
 			}
 
+			for (unsigned bs_i=0; bs_i < data_bs[div_i][cent_i].size(); bs_i++) {
+				out_file << endl << "bootstrap #" << bs_i<< endl;
+
+				for (unsigned particle_bin=0; particle_bin < data[div_i][cent_i].size(); particle_bin++) {
+					bool write = false;
+					for (long count : data_bs[div_i][cent_i][bs_i][particle_bin]) {
+						if (count != 0) {
+							write = true;
+							break;
+						}
+					}
+					if (write) {
+						out_file << to_string(particle_bin + particle_min) << io::data_delimeters[0];
+						for (unsigned num_protons=0; num_protons < data_bs[div_i][cent_i][bs_i][particle_bin].size(); num_protons++) {
+							if (data_bs[div_i][cent_i][bs_i][particle_bin][num_protons] != 0) {
+								out_file << to_string(num_protons) << io::data_delimeters[2] << data_bs[div_i][cent_i][bs_i][particle_bin][num_protons] << io::data_delimeters[1];
+							}
+						}
+						out_file << endl;
+					}
+				}
+			}
 			out_file.close();
 		}
 	}

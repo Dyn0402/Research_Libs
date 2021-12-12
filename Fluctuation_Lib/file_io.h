@@ -18,11 +18,11 @@ using namespace std;
 
 bool check_path(string path);
 
-void write_tree_data(string job_id, map<int, map<int, map<int, map<int, long>>>> data, string path="");
-void write_tree_data_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> data, map<int, map<int, map<int, map<int, map<int, long>>>>> data_bs, string path);
+void write_tree_data(string job_id, vector<vector<vector<vector<long>>>> &data, vector<int> divs, int cent_min, int particle_min, string path="");
+void write_tree_data_bootstrap(string job_id, vector<vector<vector<vector<long>>>> &data, vector<vector<vector<vector<vector<long>>>>> &data_bs, vector<int> divs, int cent_min, int particle_min, string path="");
 
-void write_ratios(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, string path="");
-void write_ratios_bootstrap(string job_id, map<int, map<int, map<int, map<int, long>>>> ratios, map<int, map<int, map<int, map<int, map<int, long>>>>> ratios_bs, string path = "");
+void write_dists(string job_id, vector<vector<vector<vector<long>>>> &data, vector<int> divs, int cent_min, int particle_min, string path="");
+void write_dists_bootstrap(string job_id, vector<vector<vector<vector<long>>>> &data, vector<vector<vector<vector<vector<long>>>>> &data_bs, vector<int> divs, int cent_min, int particle_min, string path="");
 void write_nprotons(string job_id, map<int, map<int, int>> good_protons, string path="");
 
 
