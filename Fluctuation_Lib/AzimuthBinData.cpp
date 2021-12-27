@@ -174,7 +174,7 @@ map<double, int> AzimuthBinData::get_diff_slice_proj(string div_flag) {
 	map<double, int> div_diff_slice_proj;
 	for(auto &event:div_diff_slice_hist) {
 		for(auto &diff:event.second) {
-			if(isinf(diff.first)) { cout << event.first << " | " << diff.first << endl; }
+//			if(isinf(diff.first)) { cout << event.first << " | " << diff.first << endl; }
 			div_diff_slice_proj[diff.first] += diff.second;
 		}
 	}
