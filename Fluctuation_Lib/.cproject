@@ -93,7 +93,7 @@
 									<listOptionValue builtIn="false" value="/star/u/dneff/Software/root/root-6.14.06/obj/include"/>
 									<listOptionValue builtIn="false" value="/home/dylan/Software/root/include"/>
 								</option>
-								<option id="gnu.cpp.compiler.option.other.other.1820796288" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -pthread -m64 -std=c++11" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1820796288" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -pthread -m64 -std=c++14" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.538792207" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.lib.release.38732606" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.lib.release">
