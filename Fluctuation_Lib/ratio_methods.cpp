@@ -300,6 +300,54 @@ vector<int> get_resamples4_test(vector<double> angles, double bin_width, int sam
 }
 
 
+vector<int> get_resamples5_test(vector<double> angles, double bin_width, int samples, vector<double> bin_lows) {
+	// Comment out input checks for slight performance uplift ~10%.
+//	if (bin_width > 2 * M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
+//		cout << "get_resamples bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
+//		bin_width = 2 * M_PI;
+//	}
+//	if (samples < 0) {  // If samples negative, complain
+//		cout << "get_resamples samples " << samples << " less than 0, taking absolute value: " << samples << "-->" << abs(samples) << endl;
+//		samples = abs(samples);
+//	}
+
+	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
+
+//	vector<double> bin_lows;  // Stochastically generate sample number of bin edges
+//	for (unsigned i = 0; i < samples; i++) {
+//		bin_lows.push_back(2 * M_PI * r->Rndm());
+//	}
+	//sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
+
+	unsigned num_angles = angles.size();
+	vector<int> hist(num_angles + 1, 0);
+	if (samples == 0) { return hist; }
+	vector<double> angles_wrap;
+	for (double angle : angles) {
+		angles_wrap.push_back(angle + 2 * M_PI);
+	}
+
+	double bin_low, bin_high;
+	for (int sample_i = 0; sample_i < samples; sample_i++) {
+		bin_low = bin_lows[sample_i];
+		bin_high = bin_low + bin_width;
+		int count = 0;
+		for (double angle : angles) {
+			if (angle >= bin_high) { break; }
+			if (angle >= bin_low) { count++; }  // Already checked bin high in previous line
+		}
+		if (bin_high >= 2 * M_PI) {
+			for (double angle : angles_wrap) {
+				if (angle >= bin_high) { break; }
+				count++;  // Already checked bin high in previous line and bin_low must be less than 2pi
+			}
+		}
+		hist[count]++;
+	}
+
+	return hist;
+}
+
 // Algorithm 2. Same as main algorithm except step size of 1 * dphi taken each time.
 // This algorithm faster for small samples/n_angles
 vector<int> get_resamples2(vector<double> angles, double bin_width, int samples) {
