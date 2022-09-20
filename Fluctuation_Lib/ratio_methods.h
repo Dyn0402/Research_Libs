@@ -28,6 +28,7 @@ vector<int> get_Rs(const vector<double>& angles, int divisions);
 vector<int> get_Rs(const vector<double>& angles, double bin_width, TRandom3 *r, int bin_num = 1);
 vector<int> get_resamples(vector<double> angles, double bin_width, int samples);
 vector<int> get_resamples4(vector<double> angles, double bin_width, int samples, TRandom3* r);
+vector<int> get_resamples4_test(vector<double> angles, double bin_width, int samples, vector<double> bin_lows);
 vector<int> get_resamples2(vector<double> angles, double bin_width, int samples);
 map<int, int> get_resamples3(vector<double> angles, double bin_width, int samples);
 double rotate_angle(double angle, double rotate);
