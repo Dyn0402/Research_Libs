@@ -158,6 +158,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 		bin_lows.push_back(2 * M_PI * r->Rndm());
 	}
 	sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
+	bin_lows.push_back(6 * M_PI);  // Dummy value for index pulled at end of algorithm
 
 	unsigned num_angles = angles.size();
 	vector<int> hist(num_angles + 1, 0);
@@ -179,7 +180,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 		while (angles[high_index] < bin_high) { high_index++; }  // Count track (iterate) if less than bin_high
 		
 		int sample_i_start = sample_i;
-		while (sample_i < samples && angles[low_index] > bin_low && angles[high_index] > bin_high) {
+		while (sample_i < samples && angles[low_index] >= bin_low && angles[high_index] >= bin_high) {
 			sample_i++;
 			bin_low = bin_lows[sample_i];
 			bin_high = bin_low + bin_width;
@@ -208,7 +209,9 @@ vector<int> get_resamples4_test(vector<double> angles, double bin_width, int sam
 	//for (unsigned i = 0; i < samples; i++) {
 	//	bin_lows.push_back(2 * M_PI * r->Rndm());
 	//}
-	//sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
+	sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
+
+	bin_lows.push_back(6 * M_PI);  // Dummy value for index pulled at end of algorithm
 
 	unsigned num_angles = angles.size();
 	vector<int> hist(num_angles + 1, 0);
@@ -230,7 +233,7 @@ vector<int> get_resamples4_test(vector<double> angles, double bin_width, int sam
 		while (angles[high_index] < bin_high) { high_index++; }  // Count track (iterate) if less than bin_high
 
 		int sample_i_start = sample_i;
-		while (sample_i < samples && angles[low_index] > bin_low && angles[high_index] > bin_high) {
+		while (sample_i < samples && angles[low_index] >= bin_low && angles[high_index] >= bin_high) {
 			sample_i++;
 			bin_low = bin_lows[sample_i];
 			bin_high = bin_low + bin_width;
