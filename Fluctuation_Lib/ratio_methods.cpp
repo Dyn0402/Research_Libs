@@ -84,7 +84,7 @@ vector<int> get_Rs(const vector<double>& angles, double bin_width, TRandom3 *r, 
 // angles need to be sorted before input!!
 // Formerly algorithm #3. Calculates number of steps to take after each sample.
 // Fastest algorithm for samples/n_angles >~ 5. Run time constant as samples->inf
-vector<int> get_resamples(vector<double> angles, double bin_width, int samples) {
+vector<int> get_resamples3(vector<double> angles, double bin_width, int samples) {
 	// Comment out input checks for slight performance uplift ~10%.
 //	if (bin_width > 2 * M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
 //		cout << "get_resamples bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
@@ -394,7 +394,7 @@ vector<int> get_resamples2(vector<double> angles, double bin_width, int samples)
 
 
 // Depricated. Very slow due to use of map<int, int> hist instead of vector. Kept around for comparison.
-map<int, int> get_resamples3(vector<double> angles, double bin_width, int samples) {
+map<int, int> get_resamples1(vector<double> angles, double bin_width, int samples) {
 	// Comment out angle checks for slight performance uplift.
 //	if (bin_width > 2 * M_PI || bin_width <= 0) {   // If bin_width not in range (0, 2Pi] set to 2Pi
 //		cout << "get_resamples bin_width " << bin_width << " out of range, setting to 2_PI" << endl;
