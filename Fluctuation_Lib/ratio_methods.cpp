@@ -154,7 +154,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
 
 	vector<double> bin_lows;  // Stochastically generate sample number of bin edges
-	for (unsigned i = 0; i < samples; i++) {
+	for (int i = 0; i < samples; i++) {
 		bin_lows.push_back(2 * M_PI * r->Rndm());
 	}
 	sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
@@ -212,7 +212,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
 
 	vector<double> bin_lows;  // Stochastically generate sample number of bin edges
-	for (unsigned i = 0; i < samples; i++) {
+	for (int i = 0; i < samples; i++) {
 		bin_lows.push_back(2 * M_PI * r[i]);
 	}
 	sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
@@ -270,7 +270,7 @@ vector<int> get_resamples5(vector<double> angles, double bin_width, int samples,
 	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
 
 	vector<double> bin_lows;  // Stochastically generate sample number of bin edges
-	for (unsigned i = 0; i < samples; i++) {
+	for (int i = 0; i < samples; i++) {
 		bin_lows.push_back(2 * M_PI * r->Rndm());
 	}
 	//sort(bin_lows.begin(), bin_lows.end());  // Sort bin edges such that algorithm can efficiency check each
