@@ -52,4 +52,8 @@ double sample_sd(vector<double> data);
 double sample_sd(vector<Measure> data);
 Measure median(vector<Measure> data);
 
+const double sample_poisson_p = exp(-1);  // Faster to define here instead of recalculating each call
+int sample_poisson(double r);
+
+
 #endif /* RATIO_METHODS_H_ */

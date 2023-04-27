@@ -709,3 +709,17 @@ Measure median(vector<Measure> data) {
 	sort(data.begin(), data.end(), [] (Measure a, Measure b) { return(a.get_val() < b.get_val()); } );
 	return(data[(int)(data.size()-1) / 2]);
 }
+
+
+// From chat-gpt but distribution seems to match actual
+// p is exp(-1), passing almost twice as fast as recalculating on each call.
+int sample_poisson(double r) {
+	double p = sample_poisson_p;
+	int k = 0;
+	while (r > p) {
+		r -= p;
+		k++;
+		p *= 1.0 / k;
+	}
+	return k;
+}
