@@ -154,6 +154,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
 
 	vector<double> bin_lows;  // Stochastically generate sample number of bin edges
+	bin_lows.reserve(samples + 1);
 	for (int i = 0; i < samples; i++) {
 		bin_lows.push_back(2 * M_PI * r->Rndm());
 	}
@@ -163,6 +164,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 	unsigned num_angles = angles.size();
 	vector<int> hist(num_angles + 1, 0);
 	if (samples == 0) { return hist; }
+	angles.reserve(num_angles * 2 + 1);
 	for (unsigned i = 0; i < num_angles; i++) {  // Duplicate angles past 2pi since bin_high will have to wrap around
 //		if (angles[i] >= 2 * M_PI || angles[i] < 0) { cout << "get_resamples angle out of range " << angles[i] << endl; }
 //		if (angles[i + 1] < angles[i]) { cout << "get_resamples angles unsorted! " << angles[i] << " > " << angles[i + 1] << endl; }
@@ -212,6 +214,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 	//sort(angles.begin(), angles.end());  ASSUMING THIS IS DONE BEFORE INPUT (for speed)
 
 	vector<double> bin_lows;  // Stochastically generate sample number of bin edges
+	bin_lows.reserve(samples + 1);
 	for (int i = 0; i < samples; i++) {
 		bin_lows.push_back(2 * M_PI * r[i]);
 	}
@@ -221,6 +224,7 @@ vector<int> get_resamples4(vector<double> angles, double bin_width, int samples,
 	unsigned num_angles = angles.size();
 	vector<int> hist(num_angles + 1, 0);
 	if (samples == 0) { return hist; }
+	angles.reserve(num_angles * 2 + 1);
 	for (unsigned i = 0; i < num_angles; i++) {  // Duplicate angles past 2pi since bin_high will have to wrap around
 		//		if (angles[i] >= 2 * M_PI || angles[i] < 0) { cout << "get_resamples angle out of range " << angles[i] << endl; }
 		//		if (angles[i + 1] < angles[i]) { cout << "get_resamples angles unsorted! " << angles[i] << " > " << angles[i + 1] << endl; }
