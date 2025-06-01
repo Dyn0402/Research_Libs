@@ -1,8 +1,8 @@
 # Compiler and ROOT flags
 CXX = g++
-ROOTCFLAGS = $(shell /local/home/dn277127/Software/root/bin/root-config --cflags)
-ROOTLIBS = $(shell /local/home/dn277127/Software/root/bin/root-config --libs)
-CXXFLAGS = -Wall -O2 -std=c++17 $(ROOTCFLAGS)
+ROOTCFLAGS = $(shell /star/u/dneff/Software/root/root-6.14.06/obj/bin/root-config --cflags)
+ROOTLIBS = $(shell /star/u/dneff/Software/root/root-6.14.06/obj/bin/root-config --libs)
+CXXFLAGS = -Wall -O2 -std=c++11 $(ROOTCFLAGS)
 
 # Sources and objects
 SRC = $(wildcard *.cpp)
